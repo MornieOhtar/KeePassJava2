@@ -34,9 +34,12 @@ public class JaxbSaveAndReloadTest extends SaveAndReloadChecks {
         return new JaxbDatabase();
     }
     @Override
-    public Database getDatabase(String name, Credentials credentials) {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(name);
-        return JaxbDatabase.load(credentials, inputStream);
+    public Database getDatabase(String name, Credentials credentials) throws IOException {
+        Database result;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(name)) {
+            result = JaxbDatabase.load(credentials, is);
+        }
+        return result;
     }
 
     @Override

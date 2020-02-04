@@ -46,7 +46,6 @@ public class XmlOutputStreamFilter extends PipedOutputStream {
     protected PipedInputStream pipedInputStream;
 
     public XmlOutputStreamFilter(final OutputStream outputStream, final XmlEventTransformer eventTransformer) throws IOException {
-
         super();
         pipedInputStream = new PipedInputStream(this);
 
@@ -95,16 +94,6 @@ public class XmlOutputStreamFilter extends PipedOutputStream {
         } catch (InterruptedException | ExecutionException e) {
             throw new IOException(e);
         }
-    }
-
-    @Override
-    public void flush() throws IOException {
-        super.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        super.close();
     }
 }
 

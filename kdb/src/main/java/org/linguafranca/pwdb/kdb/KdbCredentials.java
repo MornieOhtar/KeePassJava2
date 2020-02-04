@@ -18,7 +18,7 @@ package org.linguafranca.pwdb.kdb;
 
 import com.google.common.io.ByteStreams;
 import org.linguafranca.pwdb.Credentials;
-import org.linguafranca.pwdb.security.Encryption;
+import org.linguafranca.pwdb.security.EncryptionUtils;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public interface KdbCredentials extends Credentials {
         private final byte [] key;
 
         public Password(byte[] password) {
-            MessageDigest md = Encryption.getMessageDigestInstance();
+            MessageDigest md = EncryptionUtils.getMessageDigestInstance();
             this.key = md.digest(password);
         }
 
@@ -58,7 +58,7 @@ public interface KdbCredentials extends Credentials {
         private final byte[] key;
 
         public KeyFile(byte[] password, InputStream inputStream) {
-            MessageDigest md = Encryption.getMessageDigestInstance();
+            MessageDigest md = EncryptionUtils.getMessageDigestInstance();
             byte[] pwKey = md.digest(password);
             md.update(pwKey);
 

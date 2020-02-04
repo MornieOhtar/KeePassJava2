@@ -1,4 +1,5 @@
 /*
+ * Copyright 2019 Kostiantyn Kozlov
  * Copyright 2015 Jo Rabin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,8 +32,9 @@ import java.io.OutputStream;
 public class DomEntryWrapperTest extends BinaryPropertyChecks {
 
     public DomEntryWrapperTest () throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Attachment.kdbx");
-        database = DomDatabaseWrapper.load(new KdbxCreds("123".getBytes()), inputStream);
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("Attachment.kdbx")) {
+            database = DomDatabaseWrapper.load(new KdbxCreds("123".getBytes()), is);
+        }
     }
 
     @Override

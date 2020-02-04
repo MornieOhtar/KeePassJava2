@@ -34,7 +34,7 @@ public class SimpleDatabaseTest extends BasicDatabaseChecks {
         try {
             return new SimpleDatabase();
         } catch (Exception e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         }
     }
 }

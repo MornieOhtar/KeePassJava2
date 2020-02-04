@@ -105,7 +105,9 @@ public class JaxbEntry extends AbstractEntry<JaxbDatabase, JaxbGroup, JaxbEntry,
 
     @Override
     public boolean removeProperty(String name) throws IllegalArgumentException {
-        if (STANDARD_PROPERTY_NAMES.contains(name)) throw new IllegalArgumentException("may not remove property: " + name);
+        if (STANDARD_PROPERTY_NAMES.contains(name)) {
+            throw new IllegalArgumentException("may not remove property: " + name);
+        }
 
         StringField toRemove = null;
         for (StringField field: delegate.getString()){
@@ -224,7 +226,7 @@ public class JaxbEntry extends AbstractEntry<JaxbDatabase, JaxbGroup, JaxbEntry,
         if (delegate.parent == null) {
             return null;
         }
-        return new JaxbGroup(database, ((JaxbGroupBinding) delegate.parent));
+        return new JaxbGroup(database, (JaxbGroupBinding) delegate.parent);
     }
 
     @Override
@@ -270,7 +272,9 @@ public class JaxbEntry extends AbstractEntry<JaxbDatabase, JaxbGroup, JaxbEntry,
 
     @Override
     public void setExpiryTime(Date expiryTime) throws IllegalArgumentException {
-        if (expiryTime == null) throw new IllegalArgumentException("expiryTime may not be null");
+        if (expiryTime == null) {
+            throw new IllegalArgumentException("expiryTime may not be null");
+        }
         delegate.getTimes().setExpiryTime(expiryTime);
     }
 

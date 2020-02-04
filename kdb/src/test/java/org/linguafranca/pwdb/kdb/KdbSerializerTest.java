@@ -29,8 +29,9 @@ public class KdbSerializerTest {
 
     @Test
     public void testCreateKdbDatabase() throws Exception {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdb");
-        Database database = KdbDatabase.load(new KdbCredentials.Password("123".getBytes()), inputStream);
-        database.visit(new Visitor.Print());
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("test123.kdb")) {
+            Database database = KdbDatabase.load(new KdbCredentials.Password("123".getBytes()), is);
+            database.visit(new Visitor.Print());
+        }
     }
 }

@@ -102,7 +102,7 @@ class Processor {
         }
     }
 
-    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private class SetLogin implements MessageProcessor {
         @Override
@@ -119,10 +119,14 @@ class Processor {
             }
             if (entry == null) {
                 entry = database.newEntry();
-                entry.setTitle("New Entry " + format.format(new Date()));
+                synchronized (format) {
+                    entry.setTitle("New Entry " + format.format(new Date()));
+                }
                 entry.setNotes("Created automatically");
             } else {
-                entry.setNotes(entry.getNotes() + "\nUpdated " + format.format(new Date()));
+                synchronized (format) {
+                    entry.setNotes(entry.getNotes() + "\nUpdated " + format.format(new Date()));
+                }
             }
             entry.setPassword(r.Password);
             entry.setUsername(r.Login);

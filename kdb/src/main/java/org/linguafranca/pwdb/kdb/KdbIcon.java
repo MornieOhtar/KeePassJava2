@@ -40,14 +40,31 @@ public class KdbIcon implements Icon {
         this.index = index;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Icon)) return false;
-
-        Icon icon = (Icon) o;
-
-        return index == icon.getIndex();
-
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + this.index;
+        return hash;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final KdbIcon other = (KdbIcon) obj;
+        if (this.index != other.index) {
+            return false;
+        }
+        return true;
+    }
+
 }

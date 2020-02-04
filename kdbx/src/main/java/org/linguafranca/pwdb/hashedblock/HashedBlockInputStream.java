@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Takes an underlying input stream formatted as Hashed Blocks
@@ -49,14 +51,9 @@ import java.util.Arrays;
  */
 public class HashedBlockInputStream extends InputStream {
 
-    private static  MessageDigest md5;
-    static {
-        try {
-            md5 = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    private static final Logger LOG = Logger.getLogger(HashedBlockInputStream.class.getName());
+
+    private static final String _HASH_ALGORITHM = "SHA-256";
     private static final int HASH_SIZE = 32;
     private static final byte[] ZERO_HASH = new byte[HASH_SIZE];
 
@@ -165,9 +162,17 @@ public class HashedBlockInputStream extends InputStream {
         readFully(readBuffer);
 
         // check the hash
-        md5.update(readBuffer);
-        if (!Arrays.equals(md5.digest(), hash)) {
-            throw new IllegalStateException("MD5 check failed while reading HashBlock");
+        try {
+            MessageDigest md5 = MessageDigest.getInstance(_HASH_ALGORITHM);
+            md5.update(readBuffer);
+            if (!Arrays.equals(md5.digest(), hash)) {
+                throw new IllegalStateException("MD5 check failed while reading HashBlock");
+            }
+        } catch (NoSuchAlgorithmException ex) {
+            if (LOG.isLoggable(Level.SEVERE)) {
+                LOG.log(Level.SEVERE, "Can't create MessageDigest with algorithm " + _HASH_ALGORITHM, ex);
+            }
+            throw new IllegalStateException(ex);
         }
         blockInputStream = new ByteArrayInputStream(readBuffer);
     }

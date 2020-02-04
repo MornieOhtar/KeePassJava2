@@ -16,6 +16,7 @@
 
 package org.linguafranca.pwdb.kdbx.dom;
 
+import java.util.Objects;
 import org.linguafranca.pwdb.Icon;
 import org.w3c.dom.Element;
 
@@ -42,14 +43,32 @@ public class DomIconWrapper implements Icon {
         element.setTextContent(String.valueOf(index));
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Icon)) return false;
-
-        Icon that = (Icon) o;
-
-        return this.getIndex() == that.getIndex();
-
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.element.getTextContent());
+        return hash;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DomIconWrapper other = (DomIconWrapper) obj;
+        if (!Objects.equals(this.element.getTextContent(), other.element.getTextContent())) {
+            return false;
+        }
+        return true;
+    }
+
+
 }

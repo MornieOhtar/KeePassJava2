@@ -28,10 +28,10 @@ import java.io.InputStream;
 public class SimpleDatabaseLoaderTest extends DatabaseLoaderChecks {
 
     public SimpleDatabaseLoaderTest() throws Exception {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx");
-        // file has password credentials
-        Credentials credentials = new KdbxCreds("123".getBytes());
-        super.database = SimpleDatabase.load(credentials, inputStream);
-
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("test123.kdbx")) {
+            // file has password credentials
+            Credentials credentials = new KdbxCreds("123".getBytes());
+            super.database = SimpleDatabase.load(credentials, is);
+        }
     }
 }

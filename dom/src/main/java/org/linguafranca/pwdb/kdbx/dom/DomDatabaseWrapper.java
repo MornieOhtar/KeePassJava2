@@ -16,23 +16,20 @@
 
 package org.linguafranca.pwdb.kdbx.dom;
 
-import org.linguafranca.pwdb.base.AbstractDatabase;
-import org.linguafranca.pwdb.kdbx.Helpers;
-import org.linguafranca.pwdb.kdbx.stream_3_1.KdbxStreamFormat;
-import org.linguafranca.pwdb.kdbx.StreamFormat;
-import org.linguafranca.pwdb.Credentials;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import org.linguafranca.pwdb.Credentials;
+import org.linguafranca.pwdb.base.AbstractDatabase;
+import org.linguafranca.pwdb.kdbx.Helpers;
 import static org.linguafranca.pwdb.kdbx.Helpers.base64FromUuid;
-import static org.linguafranca.pwdb.kdbx.dom.DomHelper.*;
+import org.linguafranca.pwdb.kdbx.StreamFormat;
+import org.linguafranca.pwdb.kdbx.stream_3_1.KdbxStreamFormat;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * The class wraps a {@link DomSerializableDatabase} as a {@link org.linguafranca.pwdb.Database}.
@@ -64,8 +61,8 @@ public class DomDatabaseWrapper extends AbstractDatabase<DomDatabaseWrapper, Dom
     private void init() {
         document = domDatabase.getDoc();
         try {
-            dbRootGroup = ((Element) DomHelper.xpath.evaluate("/KeePassFile/Root/Group", document, XPathConstants.NODE));
-            dbMeta = ((Element) DomHelper.xpath.evaluate("/KeePassFile/Meta", document, XPathConstants.NODE));
+            dbRootGroup = (Element) DomHelper.xpath.evaluate("/KeePassFile/Root/Group", document, XPathConstants.NODE);
+            dbMeta = (Element) DomHelper.xpath.evaluate("/KeePassFile/Meta", document, XPathConstants.NODE);
         } catch (XPathExpressionException e) {
             throw new IllegalStateException(e);
         }
@@ -120,7 +117,7 @@ public class DomDatabaseWrapper extends AbstractDatabase<DomDatabaseWrapper, Dom
 
     @Override
     public DomGroupWrapper getRecycleBin() {
-        String UUIDcontent = getElementContent(RECYCLE_BIN_UUID_ELEMENT_NAME, dbMeta);
+        String UUIDcontent = DomHelper.getElementContent(DomHelper.RECYCLE_BIN_UUID_ELEMENT_NAME, dbMeta);
         if (UUIDcontent != null){
             final UUID uuid = Helpers.uuidFromBase64(UUIDcontent);
             if (uuid.getLeastSignificantBits() != 0 && uuid.getMostSignificantBits() != 0) {
@@ -141,19 +138,19 @@ public class DomDatabaseWrapper extends AbstractDatabase<DomDatabaseWrapper, Dom
         DomGroupWrapper g = newGroup();
         g.setName("Recycle Bin");
         getRootGroup().addGroup(g);
-        ensureElementContent(RECYCLE_BIN_UUID_ELEMENT_NAME, dbMeta, base64FromUuid(g.getUuid()));
-        touchElement(RECYCLE_BIN_CHANGED_ELEMENT_NAME, dbMeta);
+        DomHelper.ensureElementContent(DomHelper.RECYCLE_BIN_UUID_ELEMENT_NAME, dbMeta, base64FromUuid(g.getUuid()));
+        DomHelper.touchElement(DomHelper.RECYCLE_BIN_CHANGED_ELEMENT_NAME, dbMeta);
         return g;
     }
 
     @Override
     public boolean isRecycleBinEnabled() {
-        return Boolean.valueOf(getElementContent(RECYCLE_BIN_ENABLED_ELEMENT_NAME, dbMeta));
+        return Boolean.valueOf(DomHelper.getElementContent(DomHelper.RECYCLE_BIN_ENABLED_ELEMENT_NAME, dbMeta));
     }
 
     @Override
     public void enableRecycleBin(boolean enable) {
-        setElementContent(RECYCLE_BIN_ENABLED_ELEMENT_NAME, dbMeta, ((Boolean) enable).toString());
+        DomHelper.setElementContent(DomHelper.RECYCLE_BIN_ENABLED_ELEMENT_NAME, dbMeta, ((Boolean) enable).toString());
     }
 
     @Override

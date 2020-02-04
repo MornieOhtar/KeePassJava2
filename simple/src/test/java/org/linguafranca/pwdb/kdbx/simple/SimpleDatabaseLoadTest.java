@@ -29,15 +29,17 @@ public class SimpleDatabaseLoadTest {
 
     @Test
     public void loadXml() throws Exception {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("ExampleDatabase.xml");
-        SimpleDatabase database = SimpleDatabase.loadXml(inputStream);
-        database.visit(new Visitor.Print());
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("ExampleDatabase.xml")) {
+            SimpleDatabase database = SimpleDatabase.loadXml(is);
+            database.visit(new Visitor.Print());
+        }
     }
     @Test
     public void loadKdbx() throws Exception {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx");
-        SimpleDatabase database = SimpleDatabase.load(new KdbxCreds("123".getBytes()), inputStream);
-        database.visit(new Visitor.Print());
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("test123.kdbx")) {
+            SimpleDatabase database = SimpleDatabase.load(new KdbxCreds("123".getBytes()), is);
+            database.visit(new Visitor.Print());
+        }
     }
 
     @Test
@@ -48,9 +50,10 @@ public class SimpleDatabaseLoadTest {
 
     @Test
     public void dbWithDeleted() throws Exception {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("testDeleted.kdbx");
-        SimpleDatabase database = SimpleDatabase.load(new KdbxCreds("123".getBytes()), inputStream);
-        database.visit(new Visitor.Print());
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("testDeleted.kdbx")) {
+            SimpleDatabase database = SimpleDatabase.load(new KdbxCreds("123".getBytes()), is);
+            database.visit(new Visitor.Print());
+        }
     }
 
 }

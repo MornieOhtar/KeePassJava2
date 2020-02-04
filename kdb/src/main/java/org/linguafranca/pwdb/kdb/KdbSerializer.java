@@ -19,7 +19,7 @@ package org.linguafranca.pwdb.kdb;
 import com.google.common.io.LittleEndianDataInputStream;
 import org.linguafranca.pwdb.Credentials;
 import org.linguafranca.pwdb.Group;
-import org.linguafranca.pwdb.security.Encryption;
+import org.linguafranca.pwdb.security.EncryptionUtils;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import java.util.UUID;
  *
  * @author jo
  */
-public class KdbSerializer {
+public final class KdbSerializer {
 
     /**
      * A purely static class
@@ -78,7 +78,7 @@ public class KdbSerializer {
         InputStream decryptedInputStream = kdbHeader.createDecryptedInputStream(credentials.getKey(), inputStream);
 
         // Wrap the decrypted stream in a digest stream
-        MessageDigest digest = Encryption.getMessageDigestInstance();
+        MessageDigest digest = EncryptionUtils.getMessageDigestInstance();
         KdbDatabase kdbDatabase = new KdbDatabase();
         // Start the dataInput at wherever we have got to in the stream
         try (DigestInputStream digestInputStream = new DigestInputStream(decryptedInputStream, digest)) {
@@ -318,7 +318,7 @@ public class KdbSerializer {
         KdbGroup candidateParent = (KdbGroup) lastGroup.getParent();
         // work our way up through the parents till we find one
         while (level <= candidateParent.computedLevel()) {
-            candidateParent = ((KdbGroup) candidateParent.getParent());
+            candidateParent = (KdbGroup) candidateParent.getParent();
         }
         return candidateParent;
     }

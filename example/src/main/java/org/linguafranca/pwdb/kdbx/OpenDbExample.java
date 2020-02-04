@@ -44,8 +44,8 @@ public class OpenDbExample {
         KdbxCreds creds = new KdbxCreds("123".getBytes());
         long start = System.currentTimeMillis();
         for (int i=0; i < loads; i++) {
-            try (InputStream inputStream = OpenDbExample.class.getClassLoader().getResourceAsStream("test1.kdbx")) {
-                Database database = loader.load(creds, inputStream);
+            try (InputStream is = OpenDbExample.class.getClassLoader().getResourceAsStream("test1.kdbx")) {
+                Database database = loader.load(creds, is);
                 for (int j = 0; j < iterations; j++) {
                     database.visit(new Visitor.Default() {
                     });

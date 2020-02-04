@@ -62,15 +62,13 @@ public class JaxbSerializableDatabase implements SerializableDatabase {
                                 value.setValue(decrypted);
                                 value.setProtected(false);
                             }
-                        }
-                        if (target instanceof JaxbGroupBinding && (parent instanceof JaxbGroupBinding)) {
-                            ((JaxbGroupBinding) target).parent = ((JaxbGroupBinding) parent);
-                        }
-                        if (target instanceof JaxbEntryBinding && (parent instanceof JaxbGroupBinding)) {
-                            ((JaxbEntryBinding) target).parent = ((JaxbGroupBinding) parent);
+                        } else if (target instanceof JaxbGroupBinding && parent instanceof JaxbGroupBinding) {
+                            ((JaxbGroupBinding) target).parent = (JaxbGroupBinding) parent;
+                        } else if (target instanceof JaxbEntryBinding && parent instanceof JaxbGroupBinding) {
+                            ((JaxbEntryBinding) target).parent = (JaxbGroupBinding) parent;
                         }
                     } catch (UnsupportedEncodingException e) {
-                        throw new IllegalStateException();
+                        throw new IllegalStateException(e);
                     }
                 }
             });
@@ -117,7 +115,7 @@ public class JaxbSerializableDatabase implements SerializableDatabase {
                             }
                         }
                     } catch (UnsupportedEncodingException e) {
-                        throw new IllegalStateException();
+                        throw new IllegalStateException(e);
                     }
                 }
             });

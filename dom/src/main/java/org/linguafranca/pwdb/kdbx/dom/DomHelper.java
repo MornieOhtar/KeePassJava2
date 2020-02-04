@@ -37,7 +37,7 @@ import java.util.*;
  *
  * @author jo
  */
-class DomHelper {
+final class DomHelper {
 
     static XPath xpath = XPathFactory.newInstance().newXPath();
 
@@ -69,6 +69,10 @@ class DomHelper {
     static final String RECYCLE_BIN_UUID_ELEMENT_NAME = "RecycleBinUuid";
     static final String RECYCLE_BIN_ENABLED_ELEMENT_NAME = "RecycleBinEnabled";
     static final String RECYCLE_BIN_CHANGED_ELEMENT_NAME = "RecycleBinChanged";
+
+
+    private DomHelper() {
+    }
 
     interface ValueCreator {
         String getValue();
@@ -135,7 +139,7 @@ class DomHelper {
             NodeList nodes = (NodeList) xpath.evaluate(elementPath, parentElement, XPathConstants.NODESET);
             ArrayList<Element> result = new ArrayList<>(nodes.getLength());
             for (int i = 0; i < nodes.getLength(); i++) {
-                result.add(((Element) nodes.item(i)));
+                result.add((Element) nodes.item(i));
             }
             return result;
         } catch (XPathExpressionException e) {

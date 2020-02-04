@@ -24,6 +24,7 @@ import org.linguafranca.pwdb.kdbx.jaxb.binding.ObjectFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -73,7 +74,7 @@ public class JaxbGroup extends AbstractGroup<JaxbDatabase, JaxbGroup, JaxbEntry,
         if (delegate.parent == null) {
             return null;
         }
-        return new JaxbGroup(database, ((JaxbGroupBinding) delegate.parent));
+        return new JaxbGroup(database, (JaxbGroupBinding) delegate.parent);
     }
 
     @Override
@@ -206,18 +207,41 @@ public class JaxbGroup extends AbstractGroup<JaxbDatabase, JaxbGroup, JaxbEntry,
         return database;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JaxbGroup that = (JaxbGroup) o;
-
-        return database.equals(that.database) && delegate.equals(that.delegate);
-    }
-
     private void touch() {
         this.delegate.getTimes().setLastModificationTime(new Date());
         this.database.setDirty(true);
     }
+
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.database);
+        hash = 71 * hash + Objects.hashCode(this.delegate);
+        return hash;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final JaxbGroup other = (JaxbGroup) obj;
+        if (!Objects.equals(this.database, other.database)) {
+            return false;
+        }
+        if (!Objects.equals(this.delegate, other.delegate)) {
+            return false;
+        }
+        return true;
+    }
+
+
 }

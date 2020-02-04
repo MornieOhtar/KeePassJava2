@@ -16,7 +16,6 @@
 
 package org.linguafranca.pwdb.checks;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,35 +51,35 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
         long now = System.currentTimeMillis();
 
         D output = createNewDatabase();
-        Assert.assertTrue(output.isDirty());
+        assertTrue(output.isDirty());
         assertEquals(5, output.getRootGroup().getGroupsCount());
 
         try (FileOutputStream fos = new FileOutputStream("testOutput/test1.kdbx")) {
             saveDatabase(output, getCreds("123".getBytes()), fos);
-            Assert.assertFalse(output.isDirty());
+            assertFalse(output.isDirty());
             fos.flush();
         }
 
-        FileInputStream fis = new FileInputStream("testOutput/test1.kdbx");
-        D input = loadDatabase(getCreds("123".getBytes()), fis);
-
-        for (Integer g = 0; g< 5; g++){
-            Group group = input.getRootGroup().getGroups().get(g);
-            assertEquals(g.toString(), group.getName());
-            assertEquals(g + 1, group.getEntries().size());
-            assertEquals(g+1, group.getEntriesCount());
-            assertEquals(input.getRootGroup(), group.getParent());
-            for (int e = 0; e <= g; e++) {
-                Entry entry = (Entry) group.getEntries().get(e);
-                assertEquals(g + "-" + e, entry.getTitle());
-                assertEquals(g + " - un - " + e, entry.getUsername());
-                assertEquals(g + "- p -" + e, entry.getPassword());
-                assertEquals(g + "- url - " + e, entry.getUrl());
-                assertEquals(g + "- n - " + e, entry.getNotes());
-                assertEquals(group, entry.getParent());
+        try (FileInputStream fis = new FileInputStream("testOutput/test1.kdbx")) {
+            D input = loadDatabase(getCreds("123".getBytes()), fis);
+            for (Integer g = 0; g < 5; g++) {
+                Group group = input.getRootGroup().getGroups().get(g);
+                assertEquals(g.toString(), group.getName());
+                assertEquals(g + 1, group.getEntries().size());
+                assertEquals(g + 1, group.getEntriesCount());
+                assertEquals(input.getRootGroup(), group.getParent());
+                for (int e = 0; e <= g; e++) {
+                    Entry entry = (Entry) group.getEntries().get(e);
+                    assertEquals(g + "-" + e, entry.getTitle());
+                    assertEquals(g + " - un - " + e, entry.getUsername());
+                    assertEquals(g + "- p -" + e, entry.getPassword());
+                    assertEquals(g + "- url - " + e, entry.getUrl());
+                    assertEquals(g + "- n - " + e, entry.getNotes());
+                    assertEquals(group, entry.getParent());
+                }
             }
+            //saveDatabase(input, new StreamFormat.None(), new Credentials.None(), System.out);
         }
-        //saveDatabase(input, new StreamFormat.None(), new Credentials.None(), System.out);
         System.out.format("Test took %d millis", System.currentTimeMillis() - now);
 
     }
@@ -104,14 +103,12 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
             fos.flush();
         }
 
-        FileInputStream fis = new FileInputStream("testOutput/test2.kdbx");
-        Database input = loadDatabase(getCreds("123".getBytes()), fis);
-
-        entry = (Entry) input.findEntries("Test attachment").get(0);
-        assertArrayEquals(new String[] {"letter J.jpeg", "letter L.jpeg"}, entry.getBinaryPropertyNames().toArray());
-
-
-        //saveDatabase(input, new StreamFormat.None(), new Credentials.None(), System.out);
+        try (FileInputStream fis = new FileInputStream("testOutput/test2.kdbx")) {
+            Database input = loadDatabase(getCreds("123".getBytes()), fis);
+            entry = (Entry) input.findEntries("Test attachment").get(0);
+            assertArrayEquals(new String[]{"letter J.jpeg", "letter L.jpeg"}, entry.getBinaryPropertyNames().toArray());
+            //saveDatabase(input, new StreamFormat.None(), new Credentials.None(), System.out);
+        }
 
     }
 
@@ -146,9 +143,9 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
     @Test @Ignore
     public void saveNewDatabase () throws IOException {
         D database = createNewDatabase();
-
-        FileOutputStream outputStream = new FileOutputStream("compatibility.kdbx");
-        saveDatabase(database, getCreds("123".getBytes()), outputStream);
+        try (FileOutputStream os = new FileOutputStream("compatibility.kdbx")) {
+            saveDatabase(database, getCreds("123".getBytes()), os);
+        }
     }
 
     /**
@@ -168,13 +165,13 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
     public void testNewDatabase() throws IOException {
         D database = getDatabase();
         G root = database.getRootGroup();
-        Assert.assertTrue(root.isRootGroup());
+        assertTrue(root.isRootGroup());
         assertEquals(0, root.getGroups().size());
         assertEquals(0, root.getEntries().size());
 
-        Assert.assertTrue(database.shouldProtect("Password"));
-        Assert.assertFalse(database.shouldProtect("Title"));
-        Assert.assertFalse(database.shouldProtect("Bogus"));
+        assertTrue(database.shouldProtect("Password"));
+        assertFalse(database.shouldProtect("Title"));
+        assertFalse(database.shouldProtect("Bogus"));
 
         assertEquals("New Database", database.getName());
         database.setName("Modified Database");
@@ -189,8 +186,8 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
 
         root.addGroup(group1);
         assertEquals("Group 1", group1.getName());
-        Assert.assertFalse(group1.isRootGroup());
-        Assert.assertTrue(root.isRootGroup());
+        assertFalse(group1.isRootGroup());
+        assertTrue(root.isRootGroup());
 
         assertEquals(1, root.getGroups().size());
         assertEquals(newGroupUUID, root.getGroups().get(0).getUuid());
@@ -199,7 +196,7 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
         root.addGroup(group1);
 
         root.removeGroup(group1);
-        Assert.assertTrue(group1.getParent() == null);
+        assertNull(group1.getParent());
         assertEquals(0, root.getGroups().size());
         root.addGroup(group1);
         assertEquals(1, root.getGroups().size());
@@ -207,7 +204,7 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
 
         try {
             root.setParent(group1);
-            Assert.fail("Cannot add root group to another group");
+            fail("Cannot add root group to another group");
         } catch (Exception ignored) {
         }
 

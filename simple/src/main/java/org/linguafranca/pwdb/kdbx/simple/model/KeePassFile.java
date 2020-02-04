@@ -25,7 +25,6 @@ import org.linguafranca.pwdb.kdbx.simple.converter.UuidConverter;
 import org.simpleframework.xml.*;
 import org.simpleframework.xml.convert.Convert;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +49,7 @@ public class KeePassFile {
         @Element(name = "Group")
         public SimpleGroup group;
         @ElementList(name = "DeletedObjects", required = false)
-        protected ArrayList<DeletedObject> deletedObjects;
+        protected List<DeletedObject> deletedObjects;
 
         public SimpleGroup getGroup() {
             return group;
@@ -93,7 +92,7 @@ public class KeePassFile {
         @Element(name = "MemoryProtection")
         public KeePassFile.MemoryProtection memoryProtection;
         @ElementList(name = "CustomIcons", required = false)
-        protected ArrayList<Icon> customIcons;
+        protected List<Icon> customIcons;
         @Element(name = "RecycleBinEnabled", type = Boolean.class)
         @Convert(KeePassBooleanConverter.class)
         public Boolean recycleBinEnabled;

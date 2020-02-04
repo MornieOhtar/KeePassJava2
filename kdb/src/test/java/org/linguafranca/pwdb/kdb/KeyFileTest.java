@@ -14,11 +14,13 @@ public class KeyFileTest {
 
     @Test
     public void openKdbWithKeyFile() throws IOException {
-        InputStream key = getClass().getClassLoader().getResourceAsStream("kdb.key");
-        KdbCredentials creds = new KdbCredentials.KeyFile("123".getBytes(), key);
-        InputStream is = getClass().getClassLoader().getResourceAsStream("kdbwithkey.kdb");
-        KdbDatabase db = KdbDatabase.load(creds, is);
-        assertEquals(1, db.getRootGroup().getGroupsCount());
-        assertEquals("General", db.getRootGroup().getGroups().get(0).getName());
+        try (InputStream key = getClass().getClassLoader().getResourceAsStream("kdb.key")) {
+            KdbCredentials creds = new KdbCredentials.KeyFile("123".getBytes(), key);
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("kdbwithkey.kdb")) {
+                KdbDatabase db = KdbDatabase.load(creds, is);
+                assertEquals(1, db.getRootGroup().getGroupsCount());
+                assertEquals("General", db.getRootGroup().getGroups().get(0).getName());
+            }
+        }
     }
 }

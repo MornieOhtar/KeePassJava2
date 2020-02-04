@@ -17,7 +17,7 @@
 package org.linguafranca.pwdb.kdbx.stream_3_1;
 
 import org.linguafranca.pwdb.kdbx.StreamEncryptor;
-import org.linguafranca.pwdb.security.Encryption;
+import org.linguafranca.pwdb.security.EncryptionUtils;
 import org.spongycastle.crypto.engines.Salsa20Engine;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
@@ -55,7 +55,7 @@ public class Salsa20StreamEncryptor implements StreamEncryptor {
      */
     @SuppressWarnings("WeakerAccess")
     public static Salsa20Engine createSalsa20(byte[] key) {
-        MessageDigest md = Encryption.getMessageDigestInstance();
+        MessageDigest md = EncryptionUtils.getMessageDigestInstance();
         KeyParameter keyParameter = new KeyParameter(md.digest(key));
         ParametersWithIV ivParameter = new ParametersWithIV(keyParameter, SALSA20_IV);
         Salsa20Engine engine = new Salsa20Engine();

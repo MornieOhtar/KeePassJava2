@@ -33,9 +33,10 @@ public class JaxbSerializableDatabaseTest {
     }
     @Test
     public void loadXml() throws Exception {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx");
-        JaxbDatabase database = JaxbDatabase.load(new KdbxCreds("123".getBytes()), inputStream);
-        database.visit(new Visitor.Print());
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("test123.kdbx")) {
+            JaxbDatabase database = JaxbDatabase.load(new KdbxCreds("123".getBytes()), is);
+            database.visit(new Visitor.Print());
+        }
     }
 
 }

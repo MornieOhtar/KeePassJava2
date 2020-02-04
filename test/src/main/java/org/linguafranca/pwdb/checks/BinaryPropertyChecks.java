@@ -17,7 +17,6 @@
 package org.linguafranca.pwdb.checks;
 
 import com.google.common.io.ByteStreams;
-import org.junit.Assert;
 
 import org.junit.Test;
 import org.linguafranca.pwdb.Credentials;
@@ -44,30 +43,33 @@ public abstract class BinaryPropertyChecks {
     public void getBinaryProperty() throws Exception {
         Entry entry = database.findEntries("Test attachment").get(0);
         byte [] letterJ = entry.getBinaryProperty("letter J.jpeg");
-        InputStream testfile = getClass().getClassLoader().getResourceAsStream("letter J.jpeg");
-        byte [] original = ByteStreams.toByteArray(testfile);
-        Assert.assertArrayEquals(original, letterJ);
+        try (InputStream testfile = getClass().getClassLoader().getResourceAsStream("letter J.jpeg")) {
+            byte[] original = ByteStreams.toByteArray(testfile);
+            assertArrayEquals(original, letterJ);
+        }
     }
 
     @Test
     public void getAnotherBinaryProperty() throws Exception {
         Entry entry = database.findEntries("Test 2 attachment").get(0);
         byte [] letterL = entry.getBinaryProperty("letter L.jpeg");
-        InputStream testfile = getClass().getClassLoader().getResourceAsStream("letter L.jpeg");
-        byte [] original = ByteStreams.toByteArray(testfile);
-        Assert.assertArrayEquals(original, letterL);
+        try (InputStream testfile = getClass().getClassLoader().getResourceAsStream("letter L.jpeg")) {
+            byte[] original = ByteStreams.toByteArray(testfile);
+            assertArrayEquals(original, letterL);
+        }
     }
 
     @Test
     public void setBinaryProperty() throws Exception {
-        InputStream testfile = getClass().getClassLoader().getResourceAsStream("letter L.jpeg");
-        byte [] original = ByteStreams.toByteArray(testfile);
-        Entry entry = database.findEntries("Test attachment").get(0);
-        entry.setBinaryProperty("letter L.jpeg", original);
-        byte [] letterL = entry.getBinaryProperty("letter L.jpeg");
-        Assert.assertArrayEquals(original, letterL);
-        assertArrayEquals(new String[] {"letter J.jpeg", "letter L.jpeg"}, entry.getBinaryPropertyNames().toArray());
-        Assert.assertTrue(database.isDirty());
+        try (InputStream testfile = getClass().getClassLoader().getResourceAsStream("letter L.jpeg")) {
+            byte[] original = ByteStreams.toByteArray(testfile);
+            Entry entry = database.findEntries("Test attachment").get(0);
+            entry.setBinaryProperty("letter L.jpeg", original);
+            byte[] letterL = entry.getBinaryProperty("letter L.jpeg");
+            assertArrayEquals(original, letterL);
+            assertArrayEquals(new String[]{"letter J.jpeg", "letter L.jpeg"}, entry.getBinaryPropertyNames().toArray());
+            assertTrue(database.isDirty());
+        }
     }
 
     @Test

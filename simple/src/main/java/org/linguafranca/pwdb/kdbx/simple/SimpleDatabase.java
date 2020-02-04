@@ -153,8 +153,11 @@ public class SimpleDatabase extends AbstractDatabase<SimpleDatabase, SimpleGroup
      * @throws Exception on failure
      */
     private static KeePassFile createEmptyDatabase() throws Exception {
-        InputStream inputStream = SimpleDatabase.class.getClassLoader().getResourceAsStream("base.kdbx.xml");
-        return getSerializer().read(KeePassFile.class, inputStream);
+        KeePassFile keePassFile = null;
+        try (InputStream is = SimpleDatabase.class.getClassLoader().getResourceAsStream("base.kdbx.xml")) {
+            keePassFile = getSerializer().read(KeePassFile.class, is);
+        }
+        return keePassFile;
     }
 
     /**
@@ -182,16 +185,16 @@ public class SimpleDatabase extends AbstractDatabase<SimpleDatabase, SimpleGroup
 
         // load the KDBX header and get the inner Kdbx stream
         KdbxHeader kdbxHeader = new KdbxHeader();
-        InputStream kdbxInnerStream = KdbxSerializer.createUnencryptedInputStream(credentials, kdbxHeader, inputStream);
-
+        KeePassFile result;
         // decrypt the encrypted fields in the inner XML stream
-        InputStream plainTextXmlStream = new XmlInputStreamFilter(kdbxInnerStream,
-                new KdbxInputTransformer(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey())));
-
-        // read the now entirely decrypted stream into database
-        KeePassFile result = getSerializer().read(KeePassFile.class, plainTextXmlStream);
-        if (!Arrays.equals(result.meta.headerHash.getContent(), kdbxHeader.getHeaderHash())) {
-            throw new IllegalStateException("Header Hash Mismatch");
+        try (InputStream kdbxInnerStream = KdbxSerializer.createUnencryptedInputStream(credentials, kdbxHeader, inputStream);
+                InputStream plainTextXmlStream = new XmlInputStreamFilter(kdbxInnerStream,
+                        new KdbxInputTransformer(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey())))) {
+            // read the now entirely decrypted stream into database
+            result = getSerializer().read(KeePassFile.class, plainTextXmlStream);
+            if (!Arrays.equals(result.meta.headerHash.getContent(), kdbxHeader.getHeaderHash())) {
+                throw new IllegalStateException("Header Hash Mismatch");
+            }
         }
 
         return new SimpleDatabase(result);
@@ -220,22 +223,24 @@ public class SimpleDatabase extends AbstractDatabase<SimpleDatabase, SimpleGroup
         try {
             // create the stream to accept unencrypted data and output to encrypted
             KdbxHeader kdbxHeader = new KdbxHeader();
-            OutputStream kdbxInnerStream = KdbxSerializer.createEncryptedOutputStream(credentials, kdbxHeader, outputStream);
-
             // the database contains the hash of the headers
-            keePassFile.meta.headerHash.setContent(kdbxHeader.getHeaderHash());
+            try (OutputStream kdbxInnerStream = KdbxSerializer.createEncryptedOutputStream(credentials, kdbxHeader, outputStream)) {
+                keePassFile.meta.headerHash.setContent(kdbxHeader.getHeaderHash());
+                // set up the "protected" attributes of fields that need inner stream encryption
+                // encrypt the fields in the XML inner stream
+                XmlOutputStreamFilter plainTextOutputStream = new XmlOutputStreamFilter(kdbxInnerStream,
+                        new KdbxOutputTransformer(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey())));
+                try {
+                    // set up the "protected" attributes of fields that need inner stream encryption
+                    prepareForSave(keePassFile.root.group);
 
-            // encrypt the fields in the XML inner stream
-            XmlOutputStreamFilter plainTextOutputStream = new XmlOutputStreamFilter(kdbxInnerStream,
-                    new KdbxOutputTransformer(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey())));
-
-            // set up the "protected" attributes of fields that need inner stream encryption
-            prepareForSave(keePassFile.root.group);
-
-            // and save the database out
-            getSerializer().write(this.keePassFile, plainTextOutputStream);
-            plainTextOutputStream.close();
-            plainTextOutputStream.await();
+                    // and save the database out
+                    getSerializer().write(this.keePassFile, plainTextOutputStream);
+                } finally {
+                    plainTextOutputStream.close();
+                    plainTextOutputStream.await();
+                }
+            }
             this.setDirty(false);
 
         } catch (Exception e) {

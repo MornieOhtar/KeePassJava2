@@ -31,9 +31,8 @@ import java.io.OutputStream;
 public class SimpleEntryTest extends BinaryPropertyChecks {
 
     public SimpleEntryTest() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Attachment.kdbx");
-        try {
-            database = SimpleDatabase.load(new KdbxCreds("123".getBytes()),inputStream);
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("Attachment.kdbx")) {
+            database = SimpleDatabase.load(new KdbxCreds("123".getBytes()), is);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

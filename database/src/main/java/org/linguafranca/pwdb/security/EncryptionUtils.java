@@ -17,6 +17,11 @@
 package org.linguafranca.pwdb.security;
 
 // use spongycastle repackaging of bouncycastle in deference to Android needs
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.engines.AESFastEngine;
 import org.spongycastle.crypto.io.CipherInputStream;
@@ -26,18 +31,15 @@ import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 /**
- * Encryption and decryption utilities..
+ * EncryptionUtils and decryption utilities..
  *
  * @author jo
  */
-public class Encryption {
+public final class EncryptionUtils {
+
+    private EncryptionUtils() {
+    }
 
     /**
      * Gets a digest for a UTF-8 encoded string
@@ -58,11 +60,13 @@ public class Encryption {
      * @return a digest as a byte array
      */
     public static byte[] getDigest(String string, String encoding) {
-        if (string == null || string.length() == 0)
+        if (string == null || string.length() == 0) {
             throw new IllegalArgumentException("String cannot be null or empty");
+        }
 
-        if (encoding == null || encoding.length() == 0)
+        if (encoding == null || encoding.length() == 0) {
             throw new IllegalArgumentException("Encoding cannot be null or empty");
+        }
 
         MessageDigest md = getMessageDigestInstance();
 
@@ -71,7 +75,7 @@ public class Encryption {
             md.update(bytes, 0, bytes.length);
             return md.digest();
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(encoding + " is not supported");
+            throw new IllegalStateException(encoding + " is not supported", e);
         }
     }
 
@@ -84,7 +88,7 @@ public class Encryption {
         try {
             return MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 is not supported");
+            throw new IllegalStateException("SHA-256 is not supported", e);
         }
     }
 

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2019 Kostiantyn Kozlov
  * Copyright 2015 Jo Rabin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,12 +31,11 @@ public class DomDatabaseWrapperLoaderTest extends DatabaseLoaderChecks {
 
     public DomDatabaseWrapperLoaderTest() throws IOException {
         // get an input stream from kdbx file
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx");
-        // file has password credentials
-        Credentials credentials = new KdbxCreds("123".getBytes());
-        // open database. DomDatabaseWrapper is so-called, since it wraps
-        // a W3C DOM, populated from the KeePass XML, and presents it
-        // through a org.linguafranca.keepass.Database interface.
-        super.database = DomDatabaseWrapper.load(credentials, inputStream);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx")) {
+            // file has password credentials
+            Credentials credentials = new KdbxCreds("123".getBytes());
+            // open database
+            super.database = DomDatabaseWrapper.load(credentials, inputStream);
+        }
     }
 }

@@ -22,22 +22,19 @@ public class LogginProxy {
 
     public static Logger logger = LoggerFactory.getLogger("proxy");
 
-    public LogginProxy(){
-
-    }
-
     public static void main(String[] args) throws IOException {
         go();
     }
 
     public static void go() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(19455);
-        do {
-            logger.info("Awaiting connection");
-            Socket clientSocket = serverSocket.accept();
-            Executors.newSingleThreadExecutor().submit(new Service(clientSocket));
-        }while (true);
-
+        try (ServerSocket serverSocket = new ServerSocket(19455)) {
+            do {
+                logger.info("Awaiting connection");
+                try (Socket clientSocket = serverSocket.accept()) {
+                    Executors.newSingleThreadExecutor().submit(new Service(clientSocket));
+                }
+            } while (true);
+        }
     }
 
     private static class Service implements Callable<Boolean> {
@@ -51,46 +48,50 @@ public class LogginProxy {
         public Boolean call() throws Exception {
             final String threadName = "Connection " + _COUNT.getAndIncrement();
             Thread.currentThread().setName(threadName);
-            final InputStream serverInputStream = clientSocket.getInputStream();
-            final OutputStream serverOutputStream = clientSocket.getOutputStream();
+            Socket forwardSocket;
+            Callable<Boolean> upstream;
+            Callable<Boolean> downstream;
+            try (InputStream serverIS = clientSocket.getInputStream();
+                    OutputStream serverOS = clientSocket.getOutputStream()) {
+                forwardSocket = new Socket("192.168.1.131", 19456);
+                try (InputStream clientIS = forwardSocket.getInputStream();
+                        OutputStream clientOS = forwardSocket.getOutputStream()) {
+                    upstream = new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            Thread.currentThread().setName(threadName + " ->");
+                            logger.info("upstream starting");
+                            byte[] b = new byte[1024];
+                            int l;
+                            while ((l = serverIS.read(b)) > -1) {
+                                clientOS.write(b, 0, l);
+                                clientOS.flush();
+                                logger.info(new String(b, 0, l));
+                            }
+                            logger.info("upstream finished");
+                            return true;
+                        }
+                    };
 
-            Socket forwardSocket = new Socket("192.168.1.131", 19456);
-            final InputStream clientInputStream = forwardSocket.getInputStream();
-            final OutputStream clientOutputStream = forwardSocket.getOutputStream();
-
-            Callable<Boolean> upstream = new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    Thread.currentThread().setName(threadName + " ->");
-                    logger.info("upstream starting");
-                    byte[] b = new byte[1024];
-                    int l;
-                    while ((l=serverInputStream.read(b)) > -1) {
-                        clientOutputStream.write(b,0,l);
-                        clientOutputStream.flush();
-                        logger.info(new String(b, 0, l));
-                    }
-                    logger.info("upstream finished");
-                    return true;
+                    downstream = new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            Thread.currentThread().setName(threadName + " <-");
+                            logger.info("downstream starting");
+                            byte[] b = new byte[1024];
+                            int l;
+                            while ((l = clientIS.read(b)) > -1) {
+                                serverOS.write(b, 0, l);
+                                serverOS.flush();
+                                logger.info(new String(b, 0, l));
+                            }
+                            logger.info("downstream finished");
+                            return true;
+                        }
+                    };
                 }
-            };
+            }
 
-            Callable<Boolean> downstream = new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    Thread.currentThread().setName(threadName + " <-");
-                    logger.info("downstream starting");
-                    byte[] b = new byte[1024];
-                    int l;
-                    while ((l = clientInputStream.read(b)) > -1) {
-                        serverOutputStream.write(b,0,l);
-                        serverOutputStream.flush();
-                        logger.info(new String(b, 0, l));
-                    }
-                    logger.info("downstream finished");
-                    return true;
-                }
-            };
             Future<Boolean> upstreamFuture = Executors.newSingleThreadExecutor().submit(upstream);
             Future<Boolean> downStreamFuture = Executors.newSingleThreadExecutor().submit(downstream);
             try {
@@ -101,7 +102,7 @@ public class LogginProxy {
                 clientSocket.shutdownOutput();
                 logger.info("Connection finished");
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                logger.error("Error processing request", e);
             }
             return true;
         }

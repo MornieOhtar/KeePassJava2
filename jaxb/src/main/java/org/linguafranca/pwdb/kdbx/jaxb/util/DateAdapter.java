@@ -30,7 +30,7 @@ public class DateAdapter {
     }
 
     public static Date fromString(String string) {
-        if (string.equals("${creationDate}")) {
+        if ("${creationDate}".equals(string)) {
             return new Date();
         }
         return Helpers.toDate(string);

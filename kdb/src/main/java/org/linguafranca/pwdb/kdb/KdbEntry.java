@@ -188,7 +188,9 @@ public class KdbEntry extends AbstractEntry<KdbDatabase, KdbGroup, KdbEntry, Kdb
 
     @Override
     public void setExpiryTime(Date expiryTime) {
-        if (expiryTime == null) throw new IllegalArgumentException("expiryTime may not be null");
+        if (expiryTime == null) {
+            throw new IllegalArgumentException("expiryTime may not be null");
+        }
         this.expiryTime = expiryTime;
     }
 

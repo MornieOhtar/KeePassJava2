@@ -5,14 +5,7 @@ settings.gradle
 gradlew
 gradlew.bat
 .gradle
+nb-configuration.xml
+nbactions.xml
 gradle
-/jaxb/target/
-/database/target/
-/test/target/
-/kdb/target/
-/kdbx/target/
-/dom/target/
-/simple/target/
-/all/target/
-/http/target/
-/example/target/
+/*/target/

@@ -16,11 +16,10 @@
 
 package org.linguafranca.pwdb.base;
 
-import org.linguafranca.pwdb.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.linguafranca.pwdb.*;
 
 /**
  * Base implementation of Database
@@ -113,7 +112,7 @@ public abstract class AbstractDatabase<D extends Database<D, G, E, I>, G extends
             }
         }
         try {
-            for (String propertyName: (entry.getBinaryPropertyNames())) {
+            for (String propertyName : entry.getBinaryPropertyNames()) {
                 try {
                     // all implementations must support setting of STANDARD_PROPERTY_NAMES
                     result.setBinaryProperty(propertyName, entry.getBinaryProperty(propertyName));

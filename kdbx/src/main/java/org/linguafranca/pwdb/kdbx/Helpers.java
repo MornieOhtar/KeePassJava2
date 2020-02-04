@@ -67,11 +67,11 @@ public class Helpers {
     }
 
     public static Boolean toBoolean(String value) {
-        return value.toLowerCase().equals("true") || value.toLowerCase().equals("Yes") || value.equals("1");
+        return "true".equals(value.toLowerCase()) || "Yes".equals(value.toLowerCase()) || "1".equals(value);
     }
 
     public static String fromBoolean(Boolean value) {
-        return value == null ? "False" : (value ? "True" : "False");
+        return value == null ? "False" : value ? "True" : "False";
     }
 
     private static SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -102,9 +102,9 @@ public class Helpers {
 
     public static byte[] unzipBinaryContent(byte[] content) {
         ByteArrayInputStream bais = new ByteArrayInputStream(content);
-        try {
-            GZIPInputStream g = new GZIPInputStream(bais);
-            return ByteStreams.toByteArray(g);
+        try (GZIPInputStream g = new GZIPInputStream(bais)) {
+            byte[] result = ByteStreams.toByteArray(g);
+            return result;
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

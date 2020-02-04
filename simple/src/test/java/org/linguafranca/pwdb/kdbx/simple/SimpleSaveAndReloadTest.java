@@ -39,8 +39,7 @@ public class SimpleSaveAndReloadTest extends SaveAndReloadChecks {
 
     @Override
     public Database getDatabase(String s, Credentials credentials) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(s);
-        try {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(s)) {
             return SimpleDatabase.load(credentials, inputStream);
         } catch (Exception e) {
             throw new IOException(e);
@@ -72,18 +71,21 @@ public class SimpleSaveAndReloadTest extends SaveAndReloadChecks {
         s.getRootGroup().addEntry(e);
         File file = File.createTempFile("kdbx", "kdbx");
         s.save(new KdbxCreds("123".getBytes()), new FileOutputStream(file));
-        InputStream inputStream = new FileInputStream(file);
-        Credentials credentials = new KdbxCreds("123".getBytes());
-        InputStream decryptedInputStream = KdbxSerializer.createUnencryptedInputStream(credentials, new KdbxHeader(), inputStream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(decryptedInputStream));
-        boolean foundValue = false;
-        while (br.ready()) {
-            String string = br.readLine();
-            if (string.trim().startsWith("<Value Protected=")) {
-                assertTrue(string.contains("True"));
-                foundValue = true;
+        boolean foundValue;
+        try (InputStream is = new FileInputStream(file)) {
+            Credentials credentials = new KdbxCreds("123".getBytes());
+            try (InputStream dis = KdbxSerializer.createUnencryptedInputStream(credentials, new KdbxHeader(), is);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(dis))) {
+                foundValue = false;
+                while (br.ready()) {
+                    String string = br.readLine();
+                    if (string.trim().startsWith("<Value Protected=")) {
+                        assertTrue(string.contains("True"));
+                        foundValue = true;
+                    }
+                    System.out.println(string);
+                }
             }
-            System.out.println(string);
         }
         assertTrue(foundValue);
     }

@@ -30,9 +30,10 @@ import java.io.OutputStream;
  */
 public class JaxbEntryTest extends BinaryPropertyChecks {
 
-    public JaxbEntryTest() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Attachment.kdbx");
-        database = JaxbDatabase.load(new KdbxCreds("123".getBytes()),inputStream);
+    public JaxbEntryTest() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("Attachment.kdbx")) {
+            database = JaxbDatabase.load(new KdbxCreds("123".getBytes()), is);
+        }
     }
 
     @Override

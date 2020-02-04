@@ -72,8 +72,8 @@ public class HashBlockTest {
     @Test
     public void testMultiWrite () throws IOException {
         File test = File.createTempFile("test","hb");
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream(test));
-        try (HashedBlockOutputStream os = new HashedBlockOutputStream(dos)) {
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(test));
+                HashedBlockOutputStream os = new HashedBlockOutputStream(dos)) {
             byte [] buf = new byte [1];
             buf[0] = 0x64;
             for (int i=0; i<100001; i++) {
@@ -85,24 +85,26 @@ public class HashBlockTest {
     }
 
     private void testFile(File test, int length, byte pattern) throws IOException {
-        FileInputStream fis = new FileInputStream(test);
-        HashedBlockInputStream is = new HashedBlockInputStream(fis);
-        int bytesRead;
-        int totalBytesRead=0;
-        byte[] inbuf = new byte[31];
-        byte[] expected = new byte[31];
-        Arrays.fill(expected, pattern);
-        while ((bytesRead = is.read(inbuf)) > 0 ){
-            totalBytesRead += bytesRead;
-            assertArrayEquals(expected, inbuf);
+        int totalBytesRead;
+        try (FileInputStream fis = new FileInputStream(test);
+                HashedBlockInputStream is = new HashedBlockInputStream(fis)) {
+            int bytesRead;
+            totalBytesRead = 0;
+            byte[] inbuf = new byte[31];
+            byte[] expected = new byte[31];
+            Arrays.fill(expected, pattern);
+            while ((bytesRead = is.read(inbuf)) > 0) {
+                totalBytesRead += bytesRead;
+                assertArrayEquals(expected, inbuf);
+            }
         }
         assertEquals(length, totalBytesRead);
     }
 
     private void createFile(File test, int length, byte pattern) throws IOException {
-        FileOutputStream fos = new FileOutputStream(test);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        try (HashedBlockOutputStream os = new HashedBlockOutputStream(bos)) {
+        try (FileOutputStream fos = new FileOutputStream(test);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                HashedBlockOutputStream os = new HashedBlockOutputStream(bos)) {
             byte [] buf = new byte [length];
             Arrays.fill(buf, pattern);
             os.write(buf);

@@ -30,22 +30,22 @@ public abstract class AbstractEntry<D extends Database<D, G, E, I>, G extends Gr
 
     @Override
     public  boolean matchTitle(String text){
-        return (getTitle() != null && getTitle().toLowerCase().contains(text.toLowerCase()));
+        return getTitle() != null && getTitle().toLowerCase().contains(text.toLowerCase());
     }
 
     @Override
     public  boolean matchNotes(String text){
-        return (getNotes()!=null && getNotes().toLowerCase().contains(text.toLowerCase()));
+        return getNotes() != null && getNotes().toLowerCase().contains(text.toLowerCase());
     }
 
     @Override
     public  boolean matchUsername(String text){
-        return (getUsername()!=null && getUsername().toLowerCase().contains(text.toLowerCase()));
+        return getUsername() != null && getUsername().toLowerCase().contains(text.toLowerCase());
     }
 
     @Override
     public  boolean matchUrl(String text){
-        return (getUrl()!=null && getUrl().toLowerCase().contains(text.toLowerCase()));
+        return getUrl() != null && getUrl().toLowerCase().contains(text.toLowerCase());
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.linguafranca.pwdb.keepasshttp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Message definitions for the protocol
@@ -106,12 +107,13 @@ public class Message {
         public Response(String request, String hash) {
             RequestType = request;
 
-            if (request.equals(Type.GET_LOGINS) ||
-                    request.equals(Type.GET_ALL_LOGINS) ||
-                    request.equals(Type.GENERATE_PASSWORD))
+            if (request.equals(Type.GET_LOGINS)
+                    || request.equals(Type.GET_ALL_LOGINS)
+                    || request.equals(Type.GENERATE_PASSWORD)) {
                 Entries = new ArrayList<>();
-            else
+            } else {
                 Entries = null;
+            }
 
             this.Hash = hash;
             this.Version = VERSION;
@@ -192,8 +194,8 @@ public class Message {
     }
 
     static class KeePassHttpEntryConfig {
-        public HashSet<String> Allow = new HashSet<>();
-        public HashSet<String> Deny = new HashSet<>();
+        public Set<String> Allow = new HashSet<>();
+        public Set<String> Deny = new HashSet<>();
         public String Realm = null;
     }
 }

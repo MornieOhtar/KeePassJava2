@@ -19,7 +19,6 @@ package org.linguafranca.pwdb.kdbx.simple;
 import org.linguafranca.pwdb.base.AbstractEntry;
 import org.linguafranca.pwdb.kdbx.Helpers;
 import org.linguafranca.pwdb.kdbx.simple.converter.UuidConverter;
-import org.linguafranca.pwdb.kdbx.simple.model.EntryClasses;
 import org.linguafranca.pwdb.kdbx.simple.model.KeePassFile;
 import org.linguafranca.pwdb.kdbx.simple.model.Times;
 import org.simpleframework.xml.Element;
@@ -62,11 +61,11 @@ public class SimpleEntry extends AbstractEntry<SimpleDatabase, SimpleGroup, Simp
     @Element(name = "Times")
     protected Times times;
     @ElementList(inline=true)
-    protected List<EntryClasses.StringProperty> string;
+    protected List<StringProperty> string;
     @ElementList(inline=true, required = false)
-    protected List<EntryClasses.BinaryProperty> binary;
+    protected List<BinaryProperty> binary;
     @Element(name = "AutoType", required = false)
-    protected EntryClasses.AutoType autoType;
+    protected AutoType autoType;
     @ElementList(name = "History", required = false)
     protected List<SimpleEntry> history;
 
@@ -94,7 +93,7 @@ public class SimpleEntry extends AbstractEntry<SimpleDatabase, SimpleGroup, Simp
         result.parent = null;
         // avoiding setProperty as it does a touch();
         for (String p: STANDARD_PROPERTY_NAMES) {
-            result.string.add(new EntryClasses.StringProperty(p, new EntryClasses.StringProperty.Value("")));
+            result.string.add(new StringProperty(p, new StringProperty.Value("")));
         }
         return result;
     }
@@ -106,19 +105,21 @@ public class SimpleEntry extends AbstractEntry<SimpleDatabase, SimpleGroup, Simp
 
     @Override
     public void setProperty(String s, String s1) {
-        EntryClasses.StringProperty sp;
+        StringProperty sp;
         if ((sp = getStringProperty(s, string)) != null) {
             this.string.remove(sp);
         }
-        this.string.add(new EntryClasses.StringProperty(s, new EntryClasses.StringProperty.Value(s1)));
+        this.string.add(new StringProperty(s, new StringProperty.Value(s1)));
         touch();
     }
 
     @Override
     public boolean removeProperty(String name) throws IllegalArgumentException {
-        if (STANDARD_PROPERTY_NAMES.contains(name)) throw new IllegalArgumentException("may not remove property: " + name);
+        if (STANDARD_PROPERTY_NAMES.contains(name)) {
+            throw new IllegalArgumentException("may not remove property: " + name);
+        }
 
-        EntryClasses.StringProperty sp = getStringProperty(name, string);
+        StringProperty sp = getStringProperty(name, string);
         if (sp == null) {
             return false;
         } else {
@@ -131,7 +132,7 @@ public class SimpleEntry extends AbstractEntry<SimpleDatabase, SimpleGroup, Simp
     @Override
     public List<String> getPropertyNames() {
         List<String> result = new ArrayList<>();
-        for (EntryClasses.StringProperty property: this.string) {
+        for (StringProperty property : this.string) {
             result.add(property.getKey());
         }
         return result;
@@ -204,7 +205,7 @@ public class SimpleEntry extends AbstractEntry<SimpleDatabase, SimpleGroup, Simp
     @Override
     public List<String> getBinaryPropertyNames() {
         List<String> result = new ArrayList<>();
-        for (EntryClasses.BinaryProperty property: this.binary) {
+        for (BinaryProperty property : this.binary) {
             result.add(property.getKey());
         }
         return result;
@@ -257,7 +258,9 @@ public class SimpleEntry extends AbstractEntry<SimpleDatabase, SimpleGroup, Simp
 
     @Override
     public void setExpiryTime(Date expiryTime) throws IllegalArgumentException {
-        if (expiryTime == null) throw new IllegalArgumentException("expiryTime may not be null");
+        if (expiryTime == null) {
+            throw new IllegalArgumentException("expiryTime may not be null");
+        }
         times.setExpiryTime(expiryTime);
     }
 

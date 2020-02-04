@@ -36,53 +36,54 @@ public class KeePassHttpHandler extends AbstractHandler {
 
         logger.debug("Got a request");
 
-        InputStream is = new LogginInputStream(request.getInputStream(), logger);
-        OutputStream outputStream = new LogginOutputStream(httpServletResponse.getOutputStream(), logger);
-        Writer writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-
-        Message.Request request1 = gson.fromJson(new BufferedReader(new InputStreamReader(is)),Message.Request.class);
-        if (request1 == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            request.setHandled(true);
-            writer.write("That's a 400. JSON not parsed. " + request.getRemoteAddr());
-            return;
-        }
-        if (request1.RequestType == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            request.setHandled(true);
-            writer.write("That's a 400. No request type found. " + request.getRemoteAddr());
-            return;
-        }
-
-        Message.Response response = new Message.Response(request1.RequestType, adaptor.getHash());
-
-        // set the crypto key on associate
-        if (request1.RequestType.equals(Message.Type.ASSOCIATE)) {
-            crypto.setKey(Helpers.decodeBase64Content(request1.Key.getBytes(), false));
-        }
-
-        // send OK even when it's fail
-        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-
-        // normal part of the protocol to fail verification on test-associate
-        if (!crypto.verify(request1)) {
-            logger.debug("Request failed verification");
-            response.Success = false;
-        } else {
-            try {
-                // processor is responsible for setting success
-                processor.process(request1, response);
-                response.Id = adaptor.getId();
-            } catch (Exception e) {
+        Message.Request request1;
+        try (InputStream is = new LogginInputStream(request.getInputStream(), logger);
+                OutputStream os = new LogginOutputStream(httpServletResponse.getOutputStream(), logger);
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os))) {
+            request1 = gson.fromJson(new BufferedReader(new InputStreamReader(is)), Message.Request.class);
+            if (request1 == null) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.Success = false;
-                response.Error = "Error processing request " + e.getMessage();
+                request.setHandled(true);
+                writer.write("That's a 400. JSON not parsed. " + request.getRemoteAddr());
+                return;
             }
+            if (request1.RequestType == null) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                request.setHandled(true);
+                writer.write("That's a 400. No request type found. " + request.getRemoteAddr());
+                return;
+            }
+
+            Message.Response response = new Message.Response(request1.RequestType, adaptor.getHash());
+
+            // set the crypto key on associate
+            if (request1.RequestType.equals(Message.Type.ASSOCIATE)) {
+                crypto.setKey(Helpers.decodeBase64Content(request1.Key.getBytes(), false));
+            }
+
+            // send OK even when it's fail
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+
+            // normal part of the protocol to fail verification on test-associate
+            if (!crypto.verify(request1)) {
+                logger.debug("Request failed verification");
+                response.Success = false;
+            } else {
+                try {
+                    // processor is responsible for setting success
+                    processor.process(request1, response);
+                    response.Id = adaptor.getId();
+                } catch (Exception e) {
+                    httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.Success = false;
+                    response.Error = "Error processing request " + e.getMessage();
+                }
+            }
+            // presumably errors need to be verifiable?
+            crypto.makeVerifiable(response);
+            gson.toJson(response, writer);
+            writer.flush();
         }
-        // presumably errors need to be verifiable?
-        crypto.makeVerifiable(response);
-        gson.toJson(response, writer);
-        writer.flush();
         request.setHandled(true);
     }
 }

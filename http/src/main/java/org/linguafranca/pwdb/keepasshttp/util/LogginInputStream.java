@@ -20,7 +20,6 @@ public class LogginInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
-        int i = is.read();
         return is.read();
     }
 
@@ -35,7 +34,9 @@ public class LogginInputStream extends InputStream {
         int i = is.read(b, off, len);
         if (i>=0) {
             String s = new String(b, off, i);
-            logger.info("--> " + s);
+            if (logger.isInfoEnabled()) {
+                logger.info("--> " + s);
+            }
         }
         return i;
     }

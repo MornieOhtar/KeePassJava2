@@ -16,21 +16,20 @@
 
 package org.linguafranca.pwdb.base;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 import org.linguafranca.pwdb.Database;
 import org.linguafranca.pwdb.Entry;
 import org.linguafranca.pwdb.Group;
 import org.linguafranca.pwdb.Icon;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
 
 /**
  * Base implementation of group
  *
  * @author Jo
  */
-public abstract class AbstractGroup<D extends Database<D, G, E, I>, G extends org.linguafranca.pwdb.base.AbstractGroup<D, G, E, I>, E extends Entry<D, G, E, I>, I extends Icon> implements Group<D, G, E, I> {
+public abstract class AbstractGroup<D extends Database<D, G, E, I>, G extends AbstractGroup<D, G, E, I>, E extends Entry<D, G, E, I>, I extends Icon> implements Group<D, G, E, I> {
 
     @Override
     public List<? extends G> findGroups(String group1) {

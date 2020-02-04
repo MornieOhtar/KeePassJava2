@@ -92,7 +92,7 @@ public class DomSerializableDatabase implements SerializableDatabase {
             // TODO we assume they are all strings, which is wrong
             NodeList protectedContent = (NodeList) DomHelper.xpath.evaluate("//*[@Protected='True']", doc, XPathConstants.NODESET);
             for (int i = 0; i < protectedContent.getLength(); i++){
-                Element element = ((Element) protectedContent.item(i));
+                Element element = (Element) protectedContent.item(i);
                 String base64 = DomHelper.getElementContent(".", element);
                 // Android compatibility
                 byte[] encrypted = Base64.decodeBase64(base64.getBytes());
@@ -125,7 +125,7 @@ public class DomSerializableDatabase implements SerializableDatabase {
             // encrypt and base64 every element marked as protected
             NodeList protectedContent = (NodeList) DomHelper.xpath.evaluate("//*[@Protected='True']", copyDoc, XPathConstants.NODESET);
             for (int i = 0; i < protectedContent.getLength(); i++){
-                Element element = ((Element) protectedContent.item(i));
+                Element element = (Element) protectedContent.item(i);
                 String decrypted = DomHelper.getElementContent(".", element);
                 if (decrypted == null) {
                     decrypted = "";

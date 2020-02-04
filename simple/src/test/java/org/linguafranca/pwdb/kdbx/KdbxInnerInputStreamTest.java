@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import org.linguafranca.pwdb.kdbx.stream_3_1.Salsa20StreamEncryptor;
 
 /**
  * @author jo
@@ -33,15 +34,17 @@ public class KdbxInnerInputStreamTest {
 
     @Test
     public void test() throws XMLStreamException, IOException {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("ExampleDatabase.xml");
-        XmlInputStreamFilter sxd = new XmlInputStreamFilter(is, new KdbxInputTransformer(new org.linguafranca.pwdb.kdbx.stream_3_1.Salsa20StreamEncryptor.None()));
-        int len;
-        do {
-            byte b[] = new byte[8096];
-            len = sxd.read(b);
-            if (len >-1)
-               System.out.print(new String(b, 0, len, Charset.forName("UTF-8")));
-        } while (len > -1);
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("ExampleDatabase.xml");
+                XmlInputStreamFilter sxd = new XmlInputStreamFilter(is, new KdbxInputTransformer(new Salsa20StreamEncryptor.None()))) {
+            int len;
+            do {
+                byte b[] = new byte[8096];
+                len = sxd.read(b);
+                if (len > -1) {
+                    System.out.print(new String(b, 0, len, Charset.forName("UTF-8")));
+                }
+            } while (len > -1);
+        }
    }
 
 }

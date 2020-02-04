@@ -29,6 +29,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of {@link org.linguafranca.pwdb.Database} for JAXB.
@@ -37,6 +39,8 @@ import java.util.UUID;
  */
 @SuppressWarnings("WeakerAccess")
 public class JaxbDatabase extends AbstractDatabase<JaxbDatabase, JaxbGroup, JaxbEntry, JaxbIcon> {
+
+    private static final Logger LOG = Logger.getLogger(JaxbDatabase.class.getName());
 
     private KeePassFile keePassFile;
     private ObjectFactory objectFactory = new ObjectFactory();
@@ -52,11 +56,15 @@ public class JaxbDatabase extends AbstractDatabase<JaxbDatabase, JaxbGroup, Jaxb
     }
 
     public static JaxbDatabase createEmptyDatabase() {
-
-        InputStream inputStream = JaxbDatabase.class.getClassLoader().getResourceAsStream("base.kdbx.xml");
-        KeePassFile keePassFile = new JaxbSerializableDatabase().load(inputStream).keePassFile;
-        keePassFile.getRoot().getGroup().setUUID(UUID.randomUUID());
-        return new JaxbDatabase(keePassFile);
+        JaxbDatabase result = null;
+        try (InputStream is = JaxbDatabase.class.getClassLoader().getResourceAsStream("base.kdbx.xml")) {
+            KeePassFile keePassFile = new JaxbSerializableDatabase().load(is).keePassFile;
+            keePassFile.getRoot().getGroup().setUUID(UUID.randomUUID());
+            result = new JaxbDatabase(keePassFile);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 
     public static JaxbDatabase load(Credentials creds, InputStream inputStream) {

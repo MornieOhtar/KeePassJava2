@@ -16,12 +16,11 @@
 
 package org.linguafranca.pwdb.kdbx.dom;
 
+import java.text.ParseException;
+import java.util.*;
 import org.linguafranca.pwdb.base.AbstractEntry;
 import org.linguafranca.pwdb.kdbx.Helpers;
 import org.w3c.dom.Element;
-
-import java.text.ParseException;
-import java.util.*;
 
 /**
  * Class wraps Entries from a {@link DomSerializableDatabase} as {@link org.linguafranca.pwdb.Entry}
@@ -82,9 +81,13 @@ public class DomEntryWrapper extends AbstractEntry <DomDatabaseWrapper, DomGroup
 
     @Override
     public boolean removeProperty(String name) throws IllegalArgumentException {
-        if (STANDARD_PROPERTY_NAMES.contains(name)) throw new IllegalArgumentException("may not remove property: " + name);
+        if (STANDARD_PROPERTY_NAMES.contains(name)) {
+            throw new IllegalArgumentException("may not remove property: " + name);
+        }
         boolean wasRemoved = DomHelper.removeElement(String.format(DomHelper.PROPERTY_ELEMENT_FORMAT, name), element);
-        if (wasRemoved) database.setDirty(true);
+        if (wasRemoved) {
+            database.setDirty(true);
+        }
         return wasRemoved;
     }
 
@@ -123,7 +126,9 @@ public class DomEntryWrapper extends AbstractEntry <DomDatabaseWrapper, DomGroup
     @Override
     public boolean removeBinaryProperty(String name) {
         boolean wasRemoved = DomHelper.removeElement(String.format(DomHelper.BINARY_PROPERTY_ELEMENT_FORMAT, name), element);
-        if (wasRemoved) database.setDirty(true);
+        if (wasRemoved) {
+            database.setDirty(true);
+        }
         return wasRemoved;
     }
 
@@ -211,7 +216,9 @@ public class DomEntryWrapper extends AbstractEntry <DomDatabaseWrapper, DomGroup
 
     @Override
     public void setExpiryTime(Date expiryTime) throws IllegalArgumentException {
-        if (expiryTime == null) throw new IllegalArgumentException("expiryTime may not be null");
+        if (expiryTime == null) {
+            throw new IllegalArgumentException("expiryTime may not be null");
+        }
         String formatted = DomHelper.dateFormatter.format(expiryTime);
         DomHelper.setElementContent(DomHelper.EXPIRY_TIME_ELEMENT_NAME, element, formatted);
     }
@@ -230,14 +237,35 @@ public class DomEntryWrapper extends AbstractEntry <DomDatabaseWrapper, DomGroup
         DomHelper.setElementContent(DomHelper.LAST_MODIFICATION_TIME_ELEMENT_NAME, element, DomHelper.dateFormatter.format(new Date()));
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DomEntryWrapper that = (DomEntryWrapper) o;
-
-        return element.equals(that.element) && database.equals(that.database);
-
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + Objects.hashCode(this.element);
+        hash = 79 * hash + Objects.hashCode(this.database);
+        return hash;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DomEntryWrapper other = (DomEntryWrapper) obj;
+        if (!Objects.equals(this.element, other.element)) {
+            return false;
+        }
+        if (!Objects.equals(this.database, other.database)) {
+            return false;
+        }
+        return true;
+    }
+
 }

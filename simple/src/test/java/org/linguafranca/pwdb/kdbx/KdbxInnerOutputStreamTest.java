@@ -49,17 +49,19 @@ public class KdbxInnerOutputStreamTest {
     @Test @Ignore
     public void testOutputStreamFilter () throws IOException, XMLStreamException {
         File temp = File.createTempFile("temp", "temp");
-        try (OutputStream outputStream = new FileOutputStream(temp)) {
-            XmlOutputStreamFilter filter = new XmlOutputStreamFilter(outputStream, new KdbxOutputTransformer.None());
-            outputStream.write("<test>hello world</test>".getBytes());
-            outputStream.flush();
+        try (OutputStream os = new FileOutputStream(temp)) {
+            XmlOutputStreamFilter filter = new XmlOutputStreamFilter(os, new KdbxOutputTransformer.None());
+            os.write("<test>hello world</test>".getBytes());
+            os.flush();
         }
 
-        InputStream inputStream = new FileInputStream(temp);
-        XmlInputStreamFilter filter1 = new XmlInputStreamFilter(inputStream, new XmlEventTransformer.None());
-        byte[] b = new byte[1024];
-        int l = filter1.read(b);
-        String s = new String(b,0,l);
+        String s;
+        try (InputStream is = new FileInputStream(temp)) {
+            XmlInputStreamFilter filter1 = new XmlInputStreamFilter(is, new XmlEventTransformer.None());
+            byte[] b = new byte[1024];
+            int l = filter1.read(b);
+            s = new String(b, 0, l);
+        }
         assertEquals("<test>hello world</test>", s);
     }
 

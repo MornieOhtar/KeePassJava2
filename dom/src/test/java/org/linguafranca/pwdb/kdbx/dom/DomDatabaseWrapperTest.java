@@ -1,4 +1,5 @@
 /*
+ * Copyright 2019 Kostiantyn Kozlov
  * Copyright 2015 Jo Rabin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,24 +34,26 @@ import java.io.InputStream;
 public class DomDatabaseWrapperTest extends BasicDatabaseChecks {
 
     public DomDatabaseWrapperTest() throws IOException {
+        super();
     }
 
     @Test
     public void inspectPasswordDatabase() throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx");
-        DomDatabaseWrapper database = new DomDatabaseWrapper(new KdbxStreamFormat(), new KdbxCreds("123".getBytes()), inputStream);
-
-        database.save(new StreamFormat.None(), new Credentials.None(), System.out);
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("test123.kdbx")) {
+            database = new DomDatabaseWrapper(new KdbxStreamFormat(), new KdbxCreds("123".getBytes()), is);
+            ((DomDatabaseWrapper) database).save(new StreamFormat.None(), new Credentials.None(), System.out);
+        }
     }
 
     @Test
     public void inspectKeyfileDatabase() throws IOException {
-        InputStream keyFileInputStream = getClass().getClassLoader().getResourceAsStream("KeyFileDatabase.key");
-        Credentials credentials = new KdbxCreds("123".getBytes(), keyFileInputStream);
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("KeyFileDatabase.kdbx");
-        DomDatabaseWrapper database = new DomDatabaseWrapper(new KdbxStreamFormat(), credentials, inputStream);
-
-        database.save(new StreamFormat.None(), new Credentials.None(), System.out);
+        try (InputStream keyFileInputStream = getClass().getClassLoader().getResourceAsStream("KeyFileDatabase.key")) {
+            Credentials credentials = new KdbxCreds("123".getBytes(), keyFileInputStream);
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("KeyFileDatabase.kdbx")) {
+                database = new DomDatabaseWrapper(new KdbxStreamFormat(), credentials, is);
+                ((DomDatabaseWrapper) database).save(new StreamFormat.None(), new Credentials.None(), System.out);
+            }
+        }
     }
 
     @Override

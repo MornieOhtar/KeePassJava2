@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Takes a stream of data and formats as Hashed Blocks to the underlying output stream.
@@ -47,14 +49,9 @@ import java.security.NoSuchAlgorithmException;
  */
 public class HashedBlockOutputStream extends OutputStream {
 
-    private static  MessageDigest md5;
-    static {
-        try {
-            md5 = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    private static final Logger LOG = Logger.getLogger(HashedBlockInputStream.class.getName());
+
+    private static final String _HASH_ALGORITHM = "SHA-256";
     private static final int BLOCK_SIZE = 8 * 1024;
     private static final int HASH_SIZE = 32;
     private static final byte[] ZERO_HASH = new byte[HASH_SIZE];
@@ -152,8 +149,16 @@ public class HashedBlockOutputStream extends OutputStream {
 
         // calculate the hash of the buffer
         byte[] buffer = blockOutputStream.toByteArray();
-        md5.update(buffer);
-        outputStream.write(md5.digest());
+        try {
+            MessageDigest md5 = MessageDigest.getInstance(_HASH_ALGORITHM);
+            md5.update(buffer);
+            outputStream.write(md5.digest());
+        } catch (NoSuchAlgorithmException ex) {
+            if (LOG.isLoggable(Level.SEVERE)) {
+                LOG.log(Level.SEVERE, "Can't create MessageDigest with algorithm " + _HASH_ALGORITHM, ex);
+            }
+            throw new IllegalStateException(ex);
+        }
 
         // write the buffer's length
         writeInt(buffer.length);

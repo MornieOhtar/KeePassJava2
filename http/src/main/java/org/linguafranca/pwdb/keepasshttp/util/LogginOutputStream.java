@@ -30,7 +30,9 @@ public class LogginOutputStream extends OutputStream {
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        logger.info("<-- " + new String(b, off, len));
+        if (logger.isInfoEnabled()) {
+            logger.info("<-- " + new String(b, off, len));
+        }
         outputStream.write(b, off, len);
     }
 

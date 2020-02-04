@@ -16,14 +16,12 @@
 
 package org.linguafranca.pwdb.kdbx.dom;
 
+import java.util.*;
 import org.jetbrains.annotations.Nullable;
 import org.linguafranca.pwdb.base.AbstractGroup;
 import org.linguafranca.pwdb.kdbx.Helpers;
-import org.w3c.dom.Element;
-
-import java.util.*;
-
 import static org.linguafranca.pwdb.kdbx.dom.DomHelper.*;
+import org.w3c.dom.Element;
 
 
 /**
@@ -62,8 +60,8 @@ public class DomGroupWrapper extends AbstractGroup<DomDatabaseWrapper, DomGroupW
 
     @Override
     public boolean isRootGroup() {
-        Element parent = ((Element) element.getParentNode());
-        return parent != null && (parent.getTagName().equals("Root"));
+        Element parent = (Element) element.getParentNode();
+        return parent != null && parent.getTagName().equals("Root");
     }
 
     @Override
@@ -78,7 +76,7 @@ public class DomGroupWrapper extends AbstractGroup<DomDatabaseWrapper, DomGroupW
 
     @Override
     public @Nullable DomGroupWrapper getParent() {
-        Element parent = ((Element) element.getParentNode());
+        Element parent = (Element) element.getParentNode();
         if (parent == null) {
             return null;
         }
@@ -198,19 +196,41 @@ public class DomGroupWrapper extends AbstractGroup<DomDatabaseWrapper, DomGroupW
         return database;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DomGroupWrapper that = (DomGroupWrapper) o;
-
-        return element.equals(that.element) && database.equals(that.database);
-
-    }
-
     private void touch() {
         touchElement(LAST_MODIFICATION_TIME_ELEMENT_NAME, this.element);
         this.database.setDirty(true);
     }
+
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.element);
+        hash = 53 * hash + Objects.hashCode(this.database);
+        return hash;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DomGroupWrapper other = (DomGroupWrapper) obj;
+        if (!Objects.equals(this.element, other.element)) {
+            return false;
+        }
+        if (!Objects.equals(this.database, other.database)) {
+            return false;
+        }
+        return true;
+    }
+
+
 }

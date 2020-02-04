@@ -30,7 +30,7 @@ public class TimeConverter implements Converter<Date>{
     @Override
     public Date read(InputNode inputNode) throws Exception {
         String value = inputNode.getValue();
-        if (value.equals("${creationDate}")) {
+        if ("${creationDate}".equals(value)) {
             return new Date();
         }
         return Helpers.toDate(value);

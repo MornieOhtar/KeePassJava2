@@ -121,23 +121,23 @@ public abstract class QuickStart<D extends Database<D, G, E, I>, G extends Group
      * Load KDB and save as KDBX
      */
     public void loadKdb() throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdb");
-        // password credentials
-        Credentials credentials = new KdbCredentials.Password("123".getBytes());
-        // load KdbDatabase
-        KdbDatabase database = KdbDatabase.load(credentials, inputStream);
-        // visit all groups and entries and list them to console
-        database.visit(new Visitor.Print());
-
-        // create a KDBX (database
-        D kdbxDatabse = getDatabase();
-        kdbxDatabse.setName("New Database");
-        kdbxDatabse.setDescription("Migration of KDB Database to KDBX Database");
-        // deep copy from group (not including source group, KDB database has simulated root)
-        kdbxDatabse.getRootGroup().copy(database.getRootGroup());
-        // save it
-        try (FileOutputStream f = new FileOutputStream("testOutput/migration.kdbx")) {
-            kdbxDatabse.save(new KdbxCreds("123".getBytes()), f);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdb")) {
+            // password credentials
+            Credentials credentials = new KdbCredentials.Password("123".getBytes());
+            // load KdbDatabase
+            KdbDatabase database = KdbDatabase.load(credentials, inputStream);
+            // visit all groups and entries and list them to console
+            database.visit(new Visitor.Print());
+            // create a KDBX (database
+            D kdbxDatabse = getDatabase();
+            kdbxDatabse.setName("New Database");
+            kdbxDatabse.setDescription("Migration of KDB Database to KDBX Database");
+            // deep copy from group (not including source group, KDB database has simulated root)
+            kdbxDatabse.getRootGroup().copy(database.getRootGroup());
+            // save it
+            try (FileOutputStream f = new FileOutputStream("testOutput/migration.kdbx")) {
+                kdbxDatabse.save(new KdbxCreds("123".getBytes()), f);
+            }
         }
     }
 }

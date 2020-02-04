@@ -21,7 +21,7 @@ import com.google.common.io.LittleEndianDataOutputStream;
 import org.linguafranca.pwdb.hashedblock.HashedBlockInputStream;
 import org.linguafranca.pwdb.hashedblock.HashedBlockOutputStream;
 import org.linguafranca.pwdb.Credentials;
-import org.linguafranca.pwdb.security.Encryption;
+import org.linguafranca.pwdb.security.EncryptionUtils;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -174,7 +174,7 @@ public class KdbxSerializer {
      * @throws IOException on error
      */
     private static boolean verifyFileVersion(LittleEndianDataInputStream ledis) throws IOException {
-        return ((ledis.readInt() & FILE_VERSION_CRITICAL_MASK) <= (FILE_VERSION_32 & FILE_VERSION_CRITICAL_MASK));
+        return (ledis.readInt() & FILE_VERSION_CRITICAL_MASK) <= (FILE_VERSION_32 & FILE_VERSION_CRITICAL_MASK);
     }
 
     /**
@@ -186,7 +186,7 @@ public class KdbxSerializer {
      */
     public static KdbxHeader readKdbxHeader(KdbxHeader kdbxHeader, InputStream inputStream) throws IOException {
 
-        MessageDigest digest = Encryption.getMessageDigestInstance();
+        MessageDigest digest = EncryptionUtils.getMessageDigestInstance();
         // we do not close this stream, otherwise we lose our place in the underlying stream
         DigestInputStream digestInputStream = new DigestInputStream(inputStream, digest);
         // we do not close this stream, otherwise we lose our place in the underlying stream
@@ -263,7 +263,7 @@ public class KdbxSerializer {
      * @throws IOException on error
      */
     public static void writeKdbxHeader(KdbxHeader kdbxHeader, OutputStream outputStream) throws IOException {
-        MessageDigest messageDigest = Encryption.getMessageDigestInstance();
+        MessageDigest messageDigest = EncryptionUtils.getMessageDigestInstance();
         DigestOutputStream digestOutputStream = new DigestOutputStream(outputStream, messageDigest);
         LittleEndianDataOutputStream ledos = new LittleEndianDataOutputStream(digestOutputStream);
 

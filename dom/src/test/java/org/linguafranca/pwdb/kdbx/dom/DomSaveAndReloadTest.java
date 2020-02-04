@@ -35,13 +35,16 @@ public class DomSaveAndReloadTest extends SaveAndReloadChecks {
         try {
             return new DomDatabaseWrapper();
         } catch (IOException e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         }
     }
     @Override
     public Database getDatabase(String name, Credentials credentials) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(name);
-        return DomDatabaseWrapper.load(credentials, inputStream);
+        Database result;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(name)) {
+            result = DomDatabaseWrapper.load(credentials, is);
+        }
+        return result;
     }
 
     @Override

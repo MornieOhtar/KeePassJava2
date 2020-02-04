@@ -49,8 +49,8 @@ public abstract class DatabaseLoaderChecks <D extends Database<D,G,E,I>, G exten
         for (Entry tes: tests) {
             System.out.println(tes.getTitle());
         }
-        Assert.assertEquals(4, tests.size());
-        if (tests.size() > 0) {
+        assertEquals(4, tests.size());
+        if (!tests.isEmpty()) {
             // copy the password of the first entry to the clipboard
             String pass = tests.get(0).getPassword();
 /*
@@ -60,12 +60,12 @@ public abstract class DatabaseLoaderChecks <D extends Database<D,G,E,I>, G exten
 */
             // all the relevant entries should have the password 123
             String pass2 = tests.get(0).getPassword();
-            Assert.assertEquals(pass, pass2);
-            Assert.assertEquals("123", pass2);
+            assertEquals(pass, pass2);
+            assertEquals("123", pass2);
         }
 
         List<? extends E> passwords = database.findEntries("password");
-        Assert.assertEquals(4, passwords.size());
+        assertEquals(4, passwords.size());
         for (Entry passwordEntry : passwords) {
             assertEquals(passwordEntry.getTitle(), passwordEntry.getPassword());
             System.out.println(passwordEntry.getTitle());
@@ -77,7 +77,7 @@ public abstract class DatabaseLoaderChecks <D extends Database<D,G,E,I>, G exten
                 return entry.getTitle().equals("hello world");
             }});
 
-        Assert.assertEquals(1, entries.size());
+        assertEquals(1, entries.size());
         assertEquals("pass", entries.get(0).getPassword());
     }
 }

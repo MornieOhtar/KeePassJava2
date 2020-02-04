@@ -29,12 +29,11 @@ public class JaxbLoaderTest extends DatabaseLoaderChecks {
 
     public JaxbLoaderTest() throws IOException {
         // get an input stream from kdbx file
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("test123.kdbx");
-        // file has password credentials
-        KdbxCreds credentials = new KdbxCreds("123".getBytes());
-        // open database. DomDatabaseWrapper is so-called, since it wraps
-        // a W3C DOM, populated from the KeePass XML, and presents it
-        // through a org.linguafranca.keepass.Database interface.
-        super.database = JaxbDatabase.load(credentials, inputStream);
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("test123.kdbx")) {
+            // file has password credentials
+            KdbxCreds credentials = new KdbxCreds("123".getBytes());
+            // open database
+            super.database = JaxbDatabase.load(credentials, is);
+        }
     }
 }

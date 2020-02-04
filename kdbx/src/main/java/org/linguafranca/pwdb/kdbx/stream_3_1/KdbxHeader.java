@@ -17,7 +17,7 @@
 package org.linguafranca.pwdb.kdbx.stream_3_1;
 
 import org.linguafranca.pwdb.kdbx.StreamFormat;
-import org.linguafranca.pwdb.security.Encryption;
+import org.linguafranca.pwdb.security.EncryptionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,8 +106,8 @@ public class KdbxHeader {
      * @throws IOException if something bad happens
      */
     public InputStream createDecryptedStream(byte[] digest, InputStream inputStream) throws IOException {
-        byte[] finalKeyDigest = Encryption.getFinalKeyDigest(digest, getMasterSeed(), getTransformSeed(), getTransformRounds());
-        return Encryption.getDecryptedInputStream(inputStream, finalKeyDigest, getEncryptionIv());
+        byte[] finalKeyDigest = EncryptionUtils.getFinalKeyDigest(digest, getMasterSeed(), getTransformSeed(), getTransformRounds());
+        return EncryptionUtils.getDecryptedInputStream(inputStream, finalKeyDigest, getEncryptionIv());
     }
 
     /**
@@ -119,8 +119,8 @@ public class KdbxHeader {
      * @throws IOException  if something bad happens
      */
     public OutputStream createEncryptedStream(byte[] digest, OutputStream outputStream) throws IOException {
-        byte[] finalKeyDigest = Encryption.getFinalKeyDigest(digest, getMasterSeed(), getTransformSeed(), getTransformRounds());
-        return Encryption.getEncryptedOutputStream(outputStream, finalKeyDigest, getEncryptionIv());
+        byte[] finalKeyDigest = EncryptionUtils.getFinalKeyDigest(digest, getMasterSeed(), getTransformSeed(), getTransformRounds());
+        return EncryptionUtils.getEncryptedOutputStream(outputStream, finalKeyDigest, getEncryptionIv());
     }
 
     public UUID getCipherUuid() {
