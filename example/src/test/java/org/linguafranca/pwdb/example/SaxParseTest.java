@@ -29,6 +29,7 @@ import java.io.IOException;
 public class SaxParseTest extends SaxParse {
 
     @Test
+    @Override
     public void exampleSaxparsing () throws IOException, SAXException, ParserConfigurationException {
         super.exampleSaxparsing();
     }

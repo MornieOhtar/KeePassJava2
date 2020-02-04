@@ -44,6 +44,7 @@ public class KdbxInputTransformer implements XmlEventTransformer {
         this.streamEncryptor = streamEncryptor;
     }
 
+    @Override
     public XMLEvent transform (XMLEvent event) {
         switch (event.getEventType()) {
             case START_ELEMENT: {

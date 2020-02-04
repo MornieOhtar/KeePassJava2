@@ -201,11 +201,13 @@ public class KdbGroup extends AbstractGroup<KdbDatabase, KdbGroup, KdbEntry, Kdb
         this.root = root;
     }
 
+    @Override
     public String toString() {
         String time = KdbDatabase.isoDateFormat.format(creationTime);
         return getPath() + String.format(" (%s) %s [%d]", uuid.toString(), time, flags);
     }
 
+    @Override
     public KdbDatabase getDatabase() {
         return database;
     }

@@ -68,6 +68,7 @@ public abstract class AbstractEntry<D extends Database<D, G, E, I>, G extends Gr
         return result + getTitle();
     }
 
+    @Override
     public String toString() {
         return this.getPath();
     }

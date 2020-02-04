@@ -47,6 +47,7 @@ class Processor {
     }
 
     private class GetLogins implements MessageProcessor {
+        @Override
         public void process(final Message.Request r, Message.Response resp) {
 
             @SuppressWarnings("unchecked")
@@ -66,6 +67,7 @@ class Processor {
     }
 
     private class GetLoginsCount implements MessageProcessor {
+        @Override
         public void process(Message.Request r, Message.Response resp) {
             processors.get(Message.Type.GET_LOGINS).process(r, resp);
             resp.Entries = null;
@@ -73,6 +75,7 @@ class Processor {
     }
 
     private class GeneratePassword implements MessageProcessor {
+        @Override
         public void process(Message.Request r, Message.Response resp) {
             String p = pwGenerator.generate();
             resp.Entries.add(new ResponseEntry("Password", "login", p, UUID.randomUUID().toString()));
@@ -82,6 +85,7 @@ class Processor {
     }
 
     private class GetAllLogins implements MessageProcessor {
+        @Override
         public void process(Message.Request r, Message.Response resp) {
             @SuppressWarnings("unchecked")
             List<Entry> entries = database.findEntries(new Entry.Matcher() {
@@ -101,6 +105,7 @@ class Processor {
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private class SetLogin implements MessageProcessor {
+        @Override
         public void process(final Message.Request r, Message.Response resp) {
             Entry entry = null;
             if (r.Uuid != null) {

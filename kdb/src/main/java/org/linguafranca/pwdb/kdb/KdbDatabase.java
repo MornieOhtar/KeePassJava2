@@ -54,11 +54,10 @@ public class KdbDatabase extends AbstractDatabase<KdbDatabase, KdbGroup, KdbEntr
     /**
      * Primarily intended for finding the parent of an Entry, when deserializing KDB data.
      *
-     * @param uuid the UUID of the group to find (these are a
-     *             simple transposition of the groupId int on deserialization)
-     *
+     * @param uuid the UUID of the group to find (these are a simple transposition of the groupId int on deserialization)     *
      * @return a group or null if none found
      */
+    @Override
     public KdbGroup findGroup(final UUID uuid) {
         GroupFinder groupFinder = new GroupFinder(uuid);
         this.visit(groupFinder);

@@ -51,6 +51,7 @@ public class XmlOutputStreamFilter extends PipedOutputStream {
         pipedInputStream = new PipedInputStream(this);
 
         Callable<Boolean> output = new Callable<Boolean>() {
+            @Override
             public Boolean call() {
                 try {
                     XMLEventReader eventReader = new com.fasterxml.aalto.stax.InputFactoryImpl()

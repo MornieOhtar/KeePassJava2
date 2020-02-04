@@ -163,6 +163,7 @@ public class KdbEntry extends AbstractEntry<KdbDatabase, KdbGroup, KdbEntry, Kdb
         this.creationTime = creationTime;
     }
 
+    @Override
     public Date getCreationTime() {
         return creationTime;
     }
@@ -171,6 +172,7 @@ public class KdbEntry extends AbstractEntry<KdbDatabase, KdbGroup, KdbEntry, Kdb
         this.lastModificationTime = lastModificationTime;
     }
 
+    @Override
     public Date getLastModificationTime() {
         return lastModificationTime;
     }
@@ -179,15 +181,18 @@ public class KdbEntry extends AbstractEntry<KdbDatabase, KdbGroup, KdbEntry, Kdb
         this.lastAccessTime = lastAccessTime;
     }
 
+    @Override
     public Date getLastAccessTime() {
         return lastAccessTime;
     }
 
+    @Override
     public void setExpiryTime(Date expiryTime) {
         if (expiryTime == null) throw new IllegalArgumentException("expiryTime may not be null");
         this.expiryTime = expiryTime;
     }
 
+    @Override
     public Date getExpiryTime() {
         return expiryTime;
     }
@@ -208,6 +213,7 @@ public class KdbEntry extends AbstractEntry<KdbDatabase, KdbGroup, KdbEntry, Kdb
         this.binaryData = binaryData;
     }
 
+    @Override
     public String toString() {
         String time = KdbDatabase.isoDateFormat.format(creationTime);
         return getPath() + String.format(" (%s, %s, %s) %s [%s]", url, username, notes.substring(0,Math.min(notes.length(), 24)), time, binaryDescription);
