@@ -55,11 +55,11 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
         Assert.assertTrue(output.isDirty());
         assertEquals(5, output.getRootGroup().getGroupsCount());
 
-        FileOutputStream fos = new FileOutputStream("testOutput/test1.kdbx");
-        saveDatabase(output, getCreds("123".getBytes()), fos);
-        Assert.assertFalse(output.isDirty());
-        fos.flush();
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream("testOutput/test1.kdbx")) {
+            saveDatabase(output, getCreds("123".getBytes()), fos);
+            Assert.assertFalse(output.isDirty());
+            fos.flush();
+        }
 
         FileInputStream fis = new FileInputStream("testOutput/test1.kdbx");
         D input = loadDatabase(getCreds("123".getBytes()), fis);
@@ -99,10 +99,10 @@ public abstract class SaveAndReloadChecks <D extends Database<D, G, E, I>, G ext
         entry.setBinaryProperty("letter L.jpeg", content);
         assertArrayEquals(new String[] {"letter J.jpeg", "letter L.jpeg"}, entry.getBinaryPropertyNames().toArray());
 
-        FileOutputStream fos = new FileOutputStream("testOutput/test2.kdbx");
-        saveDatabase(attachment, getCreds("123".getBytes()), fos);
-        fos.flush();
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream("testOutput/test2.kdbx")) {
+            saveDatabase(attachment, getCreds("123".getBytes()), fos);
+            fos.flush();
+        }
 
         FileInputStream fis = new FileInputStream("testOutput/test2.kdbx");
         Database input = loadDatabase(getCreds("123".getBytes()), fis);

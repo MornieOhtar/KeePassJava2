@@ -49,11 +49,11 @@ public class KdbxSerializerTest {
         File tempFile = File.createTempFile("test", "test");
         OutputStream testStream = new FileOutputStream(tempFile);
         Credentials credentials = new KdbxCreds("123".getBytes());
-        OutputStream outputStream = KdbxSerializer.createEncryptedOutputStream(credentials, new KdbxHeader(), testStream);
-
-        outputStream.write("Hello World\n".getBytes());
-        outputStream.flush();
-        outputStream.close();
+        
+        try (OutputStream outputStream = KdbxSerializer.createEncryptedOutputStream(credentials, new KdbxHeader(), testStream)) {
+            outputStream.write("Hello World\n".getBytes());
+            outputStream.flush();
+        }
 
         InputStream inputStream = KdbxSerializer.createUnencryptedInputStream(credentials, new KdbxHeader(), new FileInputStream(tempFile));
         Scanner scanner = new Scanner(inputStream);

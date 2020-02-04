@@ -73,13 +73,13 @@ public class HashBlockTest {
     public void testMultiWrite () throws IOException {
         File test = File.createTempFile("test","hb");
         DataOutputStream dos = new DataOutputStream(new FileOutputStream(test));
-        HashedBlockOutputStream os = new HashedBlockOutputStream(dos);
-        byte [] buf = new byte [1];
-        buf[0] = 0x64;
-        for (int i=0; i<100001; i++) {
-            os.write(buf);
+        try (HashedBlockOutputStream os = new HashedBlockOutputStream(dos)) {
+            byte [] buf = new byte [1];
+            buf[0] = 0x64;
+            for (int i=0; i<100001; i++) {
+                os.write(buf);
+            }
         }
-        os.close();
 
         testFile(test, 100001, (byte) 0x64);
     }
@@ -102,12 +102,12 @@ public class HashBlockTest {
     private void createFile(File test, int length, byte pattern) throws IOException {
         FileOutputStream fos = new FileOutputStream(test);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
-        HashedBlockOutputStream os = new HashedBlockOutputStream(bos);
-        byte [] buf = new byte [length];
-        Arrays.fill(buf, pattern);
-        os.write(buf);
-        os.flush();
-        os.close();
+        try (HashedBlockOutputStream os = new HashedBlockOutputStream(bos)) {
+            byte [] buf = new byte [length];
+            Arrays.fill(buf, pattern);
+            os.write(buf);
+            os.flush();
+        }
         System.out.println("File size is " + test.length() + " test buffer is " + length);
     }
 

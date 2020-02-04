@@ -124,11 +124,9 @@ public class Helpers {
     public static byte[] zipBinaryContent(byte[] value) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // zip up the content
-        try {
-            GZIPOutputStream g = new GZIPOutputStream(baos);
+        try (GZIPOutputStream g = new GZIPOutputStream(baos)){
             g.write(value, 0, value.length);
             g.flush();
-            g.close();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

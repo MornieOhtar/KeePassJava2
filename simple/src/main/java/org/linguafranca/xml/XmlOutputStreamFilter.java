@@ -59,7 +59,7 @@ public class XmlOutputStreamFilter extends PipedOutputStream {
                     XMLEventWriter eventWriter = new com.fasterxml.aalto.stax.OutputFactoryImpl()
                             .createXMLEventWriter(outputStream);
 
-                    XMLEvent event = null;
+                    XMLEvent event;
                     while (eventReader.hasNext()) {
                         event = eventReader.nextEvent();
                         event = eventTransformer.transform(event);

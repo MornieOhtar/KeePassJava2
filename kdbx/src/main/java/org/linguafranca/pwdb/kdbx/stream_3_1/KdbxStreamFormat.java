@@ -34,21 +34,21 @@ public class KdbxStreamFormat implements StreamFormat {
     @Override
     public void load(SerializableDatabase serializableDatabase, Credentials credentials, InputStream encryptedInputStream) throws IOException {
         KdbxHeader kdbxHeader = new KdbxHeader();
-        InputStream decryptedInputStream = KdbxSerializer.createUnencryptedInputStream(credentials, kdbxHeader, encryptedInputStream);
-        serializableDatabase.setEncryption(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey()));
-        serializableDatabase.load(decryptedInputStream);
-        decryptedInputStream.close();
+        try (InputStream decryptedInputStream = KdbxSerializer.createUnencryptedInputStream(credentials, kdbxHeader, encryptedInputStream)) {
+            serializableDatabase.setEncryption(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey()));
+            serializableDatabase.load(decryptedInputStream);
+        }
     }
 
     @Override
     public void save(SerializableDatabase serializableDatabase, Credentials credentials, OutputStream encryptedOutputStream) throws IOException {
         // fresh kdbx header
         KdbxHeader kdbxHeader = new KdbxHeader();
-        OutputStream unencrytedOutputStream = KdbxSerializer.createEncryptedOutputStream(credentials, kdbxHeader, encryptedOutputStream);
-        serializableDatabase.setHeaderHash(kdbxHeader.getHeaderHash());
-        serializableDatabase.setEncryption(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey()));
-        serializableDatabase.save(unencrytedOutputStream);
-        unencrytedOutputStream.flush();
-        unencrytedOutputStream.close();
+        try (OutputStream unencrytedOutputStream = KdbxSerializer.createEncryptedOutputStream(credentials, kdbxHeader, encryptedOutputStream)) {
+            serializableDatabase.setHeaderHash(kdbxHeader.getHeaderHash());
+            serializableDatabase.setEncryption(new Salsa20StreamEncryptor(kdbxHeader.getProtectedStreamKey()));
+            serializableDatabase.save(unencrytedOutputStream);
+            unencrytedOutputStream.flush();
+        }
     }
 }

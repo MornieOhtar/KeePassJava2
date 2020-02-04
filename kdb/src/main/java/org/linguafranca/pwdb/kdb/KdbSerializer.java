@@ -79,30 +79,25 @@ public class KdbSerializer {
 
         // Wrap the decrypted stream in a digest stream
         MessageDigest digest = Encryption.getMessageDigestInstance();
-        DigestInputStream digestInputStream = new DigestInputStream(decryptedInputStream, digest);
-
-        // Start the dataInput at wherever we have got to in the stream
-        dataInput = new LittleEndianDataInputStream(digestInputStream);
-
-        // read the decrypted serialized form of all groups
         KdbDatabase kdbDatabase = new KdbDatabase();
-        KdbGroup lastGroup = (KdbGroup) kdbDatabase.getRootGroup();
-        for (long group = 0; group < kdbHeader.getGroupCount(); group++) {
-            lastGroup = deserializeGroup(lastGroup, dataInput);
+        // Start the dataInput at wherever we have got to in the stream
+        try (DigestInputStream digestInputStream = new DigestInputStream(decryptedInputStream, digest)) {
+            // Start the dataInput at wherever we have got to in the stream
+            dataInput = new LittleEndianDataInputStream(digestInputStream);
+            // read the decrypted serialized form of all groups
+            KdbGroup lastGroup = (KdbGroup) kdbDatabase.getRootGroup();
+            for (long group = 0; group < kdbHeader.getGroupCount(); group++) {
+                lastGroup = deserializeGroup(lastGroup, dataInput);
+            }   
+            // read the decrypted serialized form of all entries
+            for (long entry = 0; entry < kdbHeader.getEntryCount(); entry++) {
+                deserializeEntry(kdbDatabase, dataInput);
+            }   
+            // check that the digest is correct (one would imagine that it would all have failed horribly by now if not)
+            if (!Arrays.equals(digest.digest(), kdbHeader.getContentHash())) {
+                throw new IllegalStateException("Hash values did not match");
+            }
         }
-
-        // read the decrypted serialized form of all entries
-        for (long entry = 0; entry < kdbHeader.getEntryCount(); entry++) {
-            deserializeEntry(kdbDatabase, dataInput);
-        }
-
-        // check that the digest is correct (one would imagine that it would all have failed horribly by now if not)
-        if (!Arrays.equals(digest.digest(), kdbHeader.getContentHash())) {
-            throw new IllegalStateException("Hash values did not match");
-        }
-
-        // close digest and all underlying streams
-        digestInputStream.close();
 
         return kdbDatabase;
     }

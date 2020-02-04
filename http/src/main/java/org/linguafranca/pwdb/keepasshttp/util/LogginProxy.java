@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author jo
  */
 public class LogginProxy {
-    private static final AtomicInteger count = new AtomicInteger(0);
+    private static final AtomicInteger _COUNT = new AtomicInteger(0);
 
     public static Logger logger = LoggerFactory.getLogger("proxy");
 
@@ -49,7 +49,7 @@ public class LogginProxy {
 
         @Override
         public Boolean call() throws Exception {
-            final String threadName = "Connection " + count.getAndIncrement();
+            final String threadName = "Connection " + _COUNT.getAndIncrement();
             Thread.currentThread().setName(threadName);
             final InputStream serverInputStream = clientSocket.getInputStream();
             final OutputStream serverOutputStream = clientSocket.getOutputStream();
