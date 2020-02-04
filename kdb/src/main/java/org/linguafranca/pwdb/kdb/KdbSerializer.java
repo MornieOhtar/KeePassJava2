@@ -17,7 +17,6 @@
 package org.linguafranca.pwdb.kdb;
 
 import com.google.common.io.LittleEndianDataInputStream;
-import org.linguafranca.pwdb.base.AbstractGroup;
 import org.linguafranca.pwdb.Credentials;
 import org.linguafranca.pwdb.Group;
 import org.linguafranca.pwdb.security.Encryption;

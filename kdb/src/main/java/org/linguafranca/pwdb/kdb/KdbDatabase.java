@@ -17,11 +17,9 @@
 package org.linguafranca.pwdb.kdb;
 
 import org.linguafranca.pwdb.Group;
-import org.linguafranca.pwdb.Icon;
 import org.linguafranca.pwdb.Visitor;
 import org.linguafranca.pwdb.base.AbstractDatabase;
 import org.linguafranca.pwdb.Credentials;
-import org.linguafranca.pwdb.Entry;
 
 import java.io.IOException;
 import java.io.InputStream;

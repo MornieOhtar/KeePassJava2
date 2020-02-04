@@ -19,8 +19,6 @@ package org.linguafranca.pwdb.kdbx.dom;
 import org.junit.Test;
 import org.linguafranca.pwdb.kdbx.Helpers;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author jo
  */

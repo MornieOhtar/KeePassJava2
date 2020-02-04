@@ -17,8 +17,6 @@
 package org.linguafranca.pwdb.kdb;
 
 import org.linguafranca.pwdb.Entry;
-
-import org.linguafranca.pwdb.Icon;
 import org.linguafranca.pwdb.base.AbstractEntry;
 
 import java.util.ArrayList;

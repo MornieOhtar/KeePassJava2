@@ -46,8 +46,8 @@ public abstract class BasicDatabaseChecks <D extends Database<D,G,E,I>, G extend
     @Test
     public void testEmptyDatabase() {
         Assert.assertTrue (database.getRootGroup().getName().equals("Root"));
-        Assert.assertTrue (database.getRootGroup().getEntries().size() == 0);
-        Assert.assertTrue (database.getRootGroup().getGroups().size() == 0);
+        Assert.assertTrue (database.getRootGroup().getEntries().isEmpty());
+        Assert.assertTrue (database.getRootGroup().getGroups().isEmpty());
     }
 
     @Test
@@ -55,8 +55,8 @@ public abstract class BasicDatabaseChecks <D extends Database<D,G,E,I>, G extend
         Group g1 = database.getRootGroup().addGroup(database.newGroup("group1"));
         Assert.assertTrue (database.getRootGroup().getGroups().size() == 1);
         Assert.assertTrue (g1.getName().equals("group1"));
-        Assert.assertTrue (g1.getGroups().size() == 0);
-        Assert.assertTrue (g1.getEntries().size() == 0);
+        Assert.assertTrue (g1.getGroups().isEmpty());
+        Assert.assertTrue (g1.getEntries().isEmpty());
         Assert.assertTrue("root is not the parent of its child", g1.getParent().equals(database.getRootGroup()));
 
         Group g2 = database.newGroup();
@@ -69,7 +69,7 @@ public abstract class BasicDatabaseChecks <D extends Database<D,G,E,I>, G extend
         // show that the list of groups is a copy
         database.getRootGroup().getGroups().clear();
         Assert.assertTrue(database.getRootGroup().getGroups().size() == 1);
-        Assert.assertTrue (g1.getEntries().size() == 0);
+        Assert.assertTrue (g1.getEntries().isEmpty());
     }
 
     @Test
@@ -82,8 +82,8 @@ public abstract class BasicDatabaseChecks <D extends Database<D,G,E,I>, G extend
         Group g3 = database.getRootGroup().removeGroup(g2);
         Assert.assertTrue (g3.equals(g1));
         Assert.assertTrue(g1.getParent() == null);
-        Assert.assertTrue(database.getRootGroup().getGroups().size() == 0);
-        Assert.assertTrue(database.getRootGroup().findGroups("group1").size() == 0);
+        Assert.assertTrue(database.getRootGroup().getGroups().isEmpty());
+        Assert.assertTrue(database.getRootGroup().findGroups("group1").isEmpty());
     }
 
     @Test

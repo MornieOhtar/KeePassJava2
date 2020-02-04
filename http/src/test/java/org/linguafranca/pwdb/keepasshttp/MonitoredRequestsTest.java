@@ -9,7 +9,6 @@ import org.linguafranca.pwdb.kdbx.simple.SimpleDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import static org.junit.Assert.fail;
 

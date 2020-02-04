@@ -16,11 +16,8 @@
 
 package org.linguafranca.pwdb.kdb;
 
-import org.linguafranca.pwdb.Database;
 import org.linguafranca.pwdb.Group;
-import org.linguafranca.pwdb.Icon;
 import org.linguafranca.pwdb.base.AbstractGroup;
-import org.linguafranca.pwdb.Entry;
 
 import java.util.ArrayList;
 import java.util.Date;

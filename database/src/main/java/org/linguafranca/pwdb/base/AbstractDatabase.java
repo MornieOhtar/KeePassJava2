@@ -140,7 +140,7 @@ public abstract class AbstractDatabase<D extends Database<D, G, E, I>, G extends
         if (entries.size() > 1) {
             throw new IllegalStateException("Two entries same UUID");
         }
-        if (entries.size() == 0) {
+        if (entries.isEmpty()) {
             return null;
         }
         return entries.get(0);
@@ -185,7 +185,7 @@ public abstract class AbstractDatabase<D extends Database<D, G, E, I>, G extends
         if (groups.size() > 1) {
             throw new IllegalStateException("Two groups same UUID");
         }
-        if (groups.size() == 0) {
+        if (groups.isEmpty()) {
             return null;
         }
         return groups.get(0);

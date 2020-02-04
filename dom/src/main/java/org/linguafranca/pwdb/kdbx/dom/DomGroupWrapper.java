@@ -17,7 +17,6 @@
 package org.linguafranca.pwdb.kdbx.dom;
 
 import org.jetbrains.annotations.Nullable;
-import org.linguafranca.pwdb.Icon;
 import org.linguafranca.pwdb.base.AbstractGroup;
 import org.linguafranca.pwdb.kdbx.Helpers;
 import org.w3c.dom.Element;

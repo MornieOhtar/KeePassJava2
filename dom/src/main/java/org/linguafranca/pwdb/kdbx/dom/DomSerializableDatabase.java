@@ -51,6 +51,9 @@ import java.util.Date;
  * @author jo
  */
 public class DomSerializableDatabase implements SerializableDatabase {
+    
+    private static final String _PROTECT_QUERY = "//Meta/MemoryProtection/Protect%s";
+    private static final String _PATTERN = "//String/Key[text()='%s']/following-sibling::Value";
 
     private Document doc;
     private StreamEncryptor encryption;
@@ -151,16 +154,14 @@ public class DomSerializableDatabase implements SerializableDatabase {
         }
     }
 
-    private static final String protectQuery = "//Meta/MemoryProtection/Protect%s";
-    private static final String pattern = "//String/Key[text()='%s']/following-sibling::Value";
     private void prepareProtection(Document doc, String protect) throws XPathExpressionException {
         // does this require encryption
-        String query = String.format(protectQuery, protect);
+        String query = String.format(_PROTECT_QUERY, protect);
         if (!((String) DomHelper.xpath.evaluate(query, doc, XPathConstants.STRING)).toLowerCase().equals("true")) {
             return;
         }
         // mark the field as Protected but don't actually encrypt yet, that comes later
-        String path = String.format(pattern, protect);
+        String path = String.format(_PATTERN, protect);
         NodeList nodelist = (NodeList) DomHelper.xpath.evaluate(path, doc, XPathConstants.NODESET);
         for (int i = 0; i < nodelist.getLength(); i++) {
             Element element = (Element) nodelist.item(i);
