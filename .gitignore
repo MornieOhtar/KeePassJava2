@@ -6,3 +6,13 @@ gradlew
 gradlew.bat
 .gradle
 gradle
+/jaxb/target/
+/database/target/
+/test/target/
+/kdb/target/
+/kdbx/target/
+/dom/target/
+/simple/target/
+/all/target/
+/http/target/
+/example/target/
