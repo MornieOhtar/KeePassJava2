@@ -82,6 +82,7 @@ public class DomDatabaseWrapper extends AbstractDatabase<DomDatabaseWrapper, Dom
         setDirty(false);
     }
 
+    @Override
     public boolean shouldProtect(String name) {
         Element protectionElement = DomHelper.getElement("MemoryProtection/Protect" + name, dbMeta, false);
         if (protectionElement == null) {
@@ -155,10 +156,12 @@ public class DomDatabaseWrapper extends AbstractDatabase<DomDatabaseWrapper, Dom
         setElementContent(RECYCLE_BIN_ENABLED_ELEMENT_NAME, dbMeta, ((Boolean) enable).toString());
     }
 
+    @Override
     public String getName() {
         return DomHelper.getElementContent("DatabaseName", dbMeta);
     }
 
+    @Override
     public void setName(String name) {
         DomHelper.setElementContent("DatabaseName", dbMeta, name);
         DomHelper.touchElement("DatabaseNameChanged", dbMeta);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+  ~ Copyright 2019 Kostiantyn Kozlov
   ~ Copyright 2015 Jo Rabin
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +39,7 @@
 
     <name>KeePassJava2</name>
     <description>A Java 7 API for databases compatible with the renowned KeePass password safe for Windows</description>
-    <url>https://github.com/jorabin/KeePassJava2</url>
+    <url>https://github.com/MornieOhtar/KeePassJava2</url>
 
     <licenses>
         <license>
@@ -49,9 +50,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/jorabin/KeePassJava2.git</connection>
-        <developerConnection>scm:git:git@github.com:jorabin/KeePassJava2.git</developerConnection>
-        <url>https://github.com/jorabin/KeePassJava2</url>
+        <connection>scm:git:git://github.com/MornieOhtar/KeePassJava2.git</connection>
+        <developerConnection>scm:git:git@github.com:MornieOhtar/KeePassJava2.git</developerConnection>
+        <url>https://github.com/MornieOhtar/KeePassJava2</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -101,9 +102,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
-                    <configuration>
-                        <skipTests>true</skipTests>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

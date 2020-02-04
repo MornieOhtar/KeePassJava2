@@ -192,8 +192,8 @@ public class Message {
     }
 
     static class KeePassHttpEntryConfig {
-        public HashSet<String> Allow = new HashSet<String>();
-        public HashSet<String> Deny = new HashSet<String>();
+        public HashSet<String> Allow = new HashSet<>();
+        public HashSet<String> Deny = new HashSet<>();
         public String Realm = null;
     }
 }
