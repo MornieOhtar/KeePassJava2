@@ -1,8 +1,8 @@
 # KeePassJava2
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.linguafranca.pwdb/KeePassJava2-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.linguafranca.pwdb/KeePassJava2-parent) 
-Master: [![Build Status](https://travis-ci.org/jorabin/KeePassJava2.svg?branch=master)](https://travis-ci.org/jorabin/KeePassJava2) 
-Develop: [![Build Status](https://travis-ci.org/jorabin/KeePassJava2.svg?branch=develop)](https://travis-ci.org/jorabin/KeePassJava2)
+Master: [![Build Status](https://travis-ci.org/MornieOhtar/KeePassJava2.svg?branch=master)](https://travis-ci.org/MornieOhtar/KeePassJava2) 
+Current: [![Build Status](https://travis-ci.org/MornieOhtar/KeePassJava2.svg?branch=cleanup)](https://travis-ci.org/MornieOhtar/KeePassJava2)
 
 A Java 7 API for databases compatible with the renowned [KeePass](http://keepass.info) password
 safe for Windows.
